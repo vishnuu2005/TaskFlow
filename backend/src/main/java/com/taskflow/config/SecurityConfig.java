@@ -63,6 +63,14 @@ public class SecurityConfig {
                     "/api/auth/register",
                     "/api/auth/login"
                 ).permitAll()
+                .requestMatchers(
+                    "/",
+                    "/index.html",
+                    "/static/**",
+                    "/favicon.ico",
+                    "/error",
+                    "/api/tasks/test"
+                ).permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
             )

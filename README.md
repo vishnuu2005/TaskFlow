@@ -39,30 +39,43 @@ A full-stack **To-Do List & Task Planner** with a Spring Boot backend (JWT auth,
 - Maven
 - MySQL 8
 
-### Backend Setup
+### Quick Start (Zero Config)
+
+Run the backend with in-memory H2 database (no MySQL setup required):
 
 ```bash
 cd backend
-
-# Set environment variables
-export DB_USERNAME=your_db_user
-export DB_PASSWORD=your_db_password
-export JWT_SECRET=your_base64_encoded_secret_min32bytes
-
-# Run
 ./mvnw spring-boot:run
 ```
+
+Once started:
+- 🌐 **Web UI:** Open [http://localhost:8081/](http://localhost:8081/) in your browser
+- 🗄️ **H2 Console:** [http://localhost:8081/h2-console](http://localhost:8081/h2-console) (JDBC URL: `jdbc:h2:mem:taskflow_db`, User: `sa`, Password: blank)
+- 🧪 **Run Tests:** `./mvnw test`
+
+### Running with MySQL (Production Profile)
 
 Create the database:
 ```sql
 CREATE DATABASE taskflow_db;
 ```
 
-### Frontend Setup
+Run with MySQL environment variables:
+```bash
+cd backend
 
-Open `frontend/index.html` in your browser, or serve it with any static server.
+export SPRING_PROFILES_ACTIVE=prod
+export DB_USERNAME=your_db_user
+export DB_PASSWORD=your_db_password
+export JWT_SECRET=your_base64_encoded_secret_min32bytes
 
-> **Important:** Update `API_BASE` in `frontend/index.html` to point to your backend URL.
+./mvnw spring-boot:run
+```
+
+### Frontend Options
+
+1. **Integrated:** The frontend is served directly by the Spring Boot server at [http://localhost:8081/](http://localhost:8081/).
+2. **Standalone:** You can also open `frontend/index.html` directly in any browser or deploy it to GitHub Pages / Vercel. It automatically detects and connects to your local or deployed backend.
 
 ---
 
