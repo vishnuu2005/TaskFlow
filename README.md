@@ -59,11 +59,19 @@ A full-stack **Task & Learning Management System (LMS)** with role-based access 
 
 ### Zero-Config Quick Start (Dev Profile with H2)
 
+**Fastest (Windows):**
+```cmd
+run.bat
+```
+*(or `./run.ps1` in PowerShell)*
+
+**Cross-Platform (Maven Wrapper):**
 ```bash
 cd backend
 ./mvnw spring-boot:run
 ```
 *(On Windows: `mvnw.cmd spring-boot:run`)*
+
 
 Once started:
 - 🌐 **Web Application:** [http://localhost:8081/](http://localhost:8081/)
