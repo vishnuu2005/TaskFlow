@@ -1,4 +1,3 @@
-
 package com.taskflow.controller;
 
 import com.taskflow.dto.TaskRequest;
@@ -36,10 +35,20 @@ public class TaskController {
     }
 
     // ==========================================
-    // GET ALL TASKS
+    // GET ALL TASKS / SEARCH / FILTER
     // ==========================================
     @GetMapping
-    public ResponseEntity<List<TaskResponse>> getAllTasks() {
+    public ResponseEntity<List<TaskResponse>> getAllTasks(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Boolean completed,
+            @RequestParam(required = false) String priority,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String sort) {
+
+        if (search != null || completed != null || priority != null || category != null || sort != null) {
+            return ResponseEntity.ok(taskService.filterTasks(search, completed, priority, category, sort));
+        }
+
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
@@ -73,6 +82,16 @@ public class TaskController {
     @PatchMapping("/{id}/toggle")
     public ResponseEntity<TaskResponse> toggleTask(@PathVariable Long id) {
         return ResponseEntity.ok(taskService.toggleTask(id));
+    }
+
+    // ==========================================
+    // TOGGLE SUBTASK
+    // ==========================================
+    @PatchMapping("/{taskId}/subtasks/{subTaskId}/toggle")
+    public ResponseEntity<TaskResponse> toggleSubTask(
+            @PathVariable Long taskId,
+            @PathVariable Long subTaskId) {
+        return ResponseEntity.ok(taskService.toggleSubTask(taskId, subTaskId));
     }
 
     // ==========================================

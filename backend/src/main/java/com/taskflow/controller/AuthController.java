@@ -66,7 +66,10 @@ public class AuthController {
         // Return token to client
         AuthResponse response = new AuthResponse(
                 token,
-                "Bearer"
+                "Bearer",
+                user.getRole().name(),
+                user.getName(),
+                user.getEmail()
         );
 
         return ResponseEntity.ok(response);

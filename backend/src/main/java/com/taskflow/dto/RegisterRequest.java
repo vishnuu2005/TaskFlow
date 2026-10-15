@@ -1,4 +1,3 @@
-
 package com.taskflow.dto;
 
 import jakarta.validation.constraints.Email;
@@ -21,6 +20,12 @@ public record RegisterRequest(
                 max = 72,
                 message = "Password must contain 8 to 72 characters"
         )
-        String password
+        String password,
 
-) {}
+        String role
+
+) {
+    public RegisterRequest(String name, String email, String password) {
+        this(name, email, password, "STUDENT");
+    }
+}

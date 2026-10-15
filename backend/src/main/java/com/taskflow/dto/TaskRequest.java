@@ -1,4 +1,3 @@
-
 package com.taskflow.dto;
 
 import jakarta.validation.constraints.NotBlank;
@@ -6,6 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record TaskRequest(
 
@@ -28,7 +28,17 @@ public record TaskRequest(
         )
         String priority,
 
-        LocalDate dueDate
+        LocalDate dueDate,
+
+        @Size(max = 50, message = "Category must not exceed 50 characters")
+        String category,
+
+        String status,
+
+        List<SubTaskDto> subtasks
 
 ) {
+    public TaskRequest(String title, String description, String priority, LocalDate dueDate) {
+        this(title, description, priority, dueDate, "General", "PENDING", null);
+    }
 }

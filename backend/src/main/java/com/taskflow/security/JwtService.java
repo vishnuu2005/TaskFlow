@@ -63,8 +63,13 @@ public class JwtService {
         Instant now = Instant.now();
         Instant expiry = now.plusMillis(expirationMs);
 
+        String roleName = user.getRole() != null ? user.getRole().name() : "STUDENT";
+        String userName = user.getName() != null ? user.getName() : "";
+
         return Jwts.builder()
                 .subject(user.getEmail())
+                .claim("role", roleName)
+                .claim("name", userName)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiry))
                 .signWith(signingKey, Jwts.SIG.HS256)
@@ -80,6 +85,17 @@ public class JwtService {
         Claims claims = parseClaims(token);
 
         return claims.getSubject();
+    }
+
+    // ==========================================
+    // EXTRACT USER ROLE
+    // ==========================================
+
+    public String extractRole(String token) {
+
+        Claims claims = parseClaims(token);
+
+        return claims.get("role", String.class);
     }
 
     // ==========================================

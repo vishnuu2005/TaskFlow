@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TaskFlow — Smart Task Manager</title>
-  <meta name="description" content="TaskFlow is a beautiful, smart to-do list and task planner with priority management, due dates, and real-time stats." />
+  <title>TaskFlow — Secure Task & Learning Management System</title>
+  <meta name="description" content="TaskFlow is an enterprise-grade task and learning management system with role-based access for Admins, Teachers, and Students." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --bg-primary:    #0a0a1a;
-      --bg-secondary:  #0f0f2e;
+      --bg-primary:    #080816;
+      --bg-secondary:  #0d0d24;
       --bg-card:       rgba(255,255,255,0.04);
-      --bg-card-hover: rgba(255,255,255,0.07);
+      --bg-card-hover: rgba(255,255,255,0.075);
       --border:        rgba(255,255,255,0.08);
       --border-focus:  rgba(139,92,246,0.6);
-      --text-primary:  #f0f0ff;
-      --text-secondary:#a0a0c0;
-      --text-muted:    #606080;
+      --text-primary:  #f3f4fd;
+      --text-secondary:#9fa2c4;
+      --text-muted:    #5e6288;
       --purple:        #8b5cf6;
       --purple-light:  #a78bfa;
       --purple-dark:   #6d28d9;
@@ -30,7 +30,7 @@
       --amber:         #f59e0b;
       --red:           #ef4444;
       --red-light:     #f87171;
-      --shadow-card:   0 8px 32px rgba(0,0,0,0.4);
+      --shadow-card:   0 12px 36px rgba(0,0,0,0.45);
       --transition:    0.2s cubic-bezier(0.4,0,0.2,1);
       --radius-sm:     8px;
       --radius-md:     12px;
@@ -43,7 +43,7 @@
       background-color: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
-      line-height: 1.6;
+      line-height: 1.5;
       overflow-x: hidden;
     }
     body::before {
@@ -51,169 +51,236 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 50% at 20% 20%, rgba(139,92,246,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(99,102,241,0.10) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(236,72,153,0.05) 0%, transparent 70%);
+        radial-gradient(ellipse 80% 50% at 15% 15%, rgba(139,92,246,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 40% at 85% 85%, rgba(99,102,241,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 30% at 50% 50%, rgba(236,72,153,0.06) 0%, transparent 70%);
       pointer-events: none;
       z-index: 0;
     }
-    .orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.25; pointer-events: none; z-index: 0; animation: float 8s ease-in-out infinite; }
-    .orb-1 { width: 400px; height: 400px; background: var(--purple); top: -100px; left: -100px; animation-delay: 0s; }
-    .orb-2 { width: 300px; height: 300px; background: var(--indigo); bottom: -80px; right: -80px; animation-delay: 3s; }
-    .orb-3 { width: 200px; height: 200px; background: var(--pink); top: 40%; left: 60%; animation-delay: 6s; }
-    @keyframes float { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(20px,-20px) scale(1.05)} 66%{transform:translate(-15px,15px) scale(0.95)} }
+    .orb { position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.22; pointer-events: none; z-index: 0; animation: float 9s ease-in-out infinite; }
+    .orb-1 { width: 450px; height: 450px; background: var(--purple); top: -120px; left: -120px; animation-delay: 0s; }
+    .orb-2 { width: 350px; height: 350px; background: var(--indigo); bottom: -100px; right: -100px; animation-delay: 3s; }
+    .orb-3 { width: 250px; height: 250px; background: var(--pink); top: 40%; left: 60%; animation-delay: 6s; }
+    @keyframes float { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(25px,-20px) scale(1.05)} 66%{transform:translate(-20px,20px) scale(0.95)} }
+
     #app { position: relative; z-index: 1; }
     .glass { background: var(--bg-card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); }
 
-    /* AUTH */
+    /* AUTH SCREEN */
     #auth-screen { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
-    .auth-container { width:100%; max-width:440px; }
-    .auth-logo { text-align:center; margin-bottom:40px; }
-    .auth-logo .logo-icon { display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; background:linear-gradient(135deg,var(--purple),var(--indigo)); border-radius:var(--radius-md); font-size:28px; margin-bottom:16px; box-shadow:0 8px 24px rgba(139,92,246,0.4); animation:pulse-logo 3s ease-in-out infinite; }
-    @keyframes pulse-logo { 0%,100%{box-shadow:0 8px 24px rgba(139,92,246,0.4)} 50%{box-shadow:0 8px 40px rgba(139,92,246,0.7)} }
-    .auth-logo h1 { font-size:2rem; font-weight:800; background:linear-gradient(135deg,var(--purple-light),var(--indigo),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; letter-spacing:-0.5px; }
-    .auth-logo p { color:var(--text-secondary); font-size:0.9rem; margin-top:4px; }
+    .auth-container { width:100%; max-width:460px; }
+    .auth-logo { text-align:center; margin-bottom:32px; }
+    .auth-logo .logo-icon { display:inline-flex; align-items:center; justify-content:center; width:68px; height:68px; background:linear-gradient(135deg,var(--purple),var(--indigo)); border-radius:var(--radius-md); font-size:32px; margin-bottom:16px; box-shadow:0 8px 30px rgba(139,92,246,0.45); animation:pulse-logo 3s ease-in-out infinite; }
+    @keyframes pulse-logo { 0%,100%{box-shadow:0 8px 24px rgba(139,92,246,0.4)} 50%{box-shadow:0 8px 45px rgba(139,92,246,0.75)} }
+    .auth-logo h1 { font-size:2.2rem; font-weight:900; background:linear-gradient(135deg,#c4b5fd,var(--indigo),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; letter-spacing:-0.5px; }
+    .auth-logo p { color:var(--text-secondary); font-size:0.92rem; margin-top:4px; }
     .auth-card { padding:36px; }
-    .tab-switcher { display:flex; background:rgba(255,255,255,0.04); border-radius:var(--radius-sm); padding:4px; margin-bottom:28px; }
-    .tab-btn { flex:1; padding:10px; border:none; background:transparent; color:var(--text-secondary); font-family:inherit; font-size:0.9rem; font-weight:500; border-radius:6px; cursor:pointer; transition:var(--transition); }
-    .tab-btn.active { background:linear-gradient(135deg,var(--purple),var(--indigo)); color:white; box-shadow:0 4px 12px rgba(139,92,246,0.4); }
-    .form-group { margin-bottom:20px; }
-    .form-label { display:block; font-size:0.82rem; font-weight:600; color:var(--text-secondary); margin-bottom:8px; letter-spacing:0.5px; text-transform:uppercase; }
-    .form-input { width:100%; padding:12px 16px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-family:inherit; font-size:0.95rem; transition:var(--transition); outline:none; }
+    .tab-switcher { display:flex; background:rgba(255,255,255,0.04); border-radius:var(--radius-sm); padding:4px; margin-bottom:24px; }
+    .tab-btn { flex:1; padding:10px; border:none; background:transparent; color:var(--text-secondary); font-family:inherit; font-size:0.9rem; font-weight:600; border-radius:6px; cursor:pointer; transition:var(--transition); }
+    .tab-btn.active { background:linear-gradient(135deg,var(--purple),var(--indigo)); color:white; box-shadow:0 4px 14px rgba(139,92,246,0.4); }
+
+    .demo-accounts { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; margin-bottom:22px; }
+    .demo-accounts p { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); font-weight:700; margin-bottom:8px; }
+    .demo-pills { display:flex; gap:6px; flex-wrap:wrap; }
+    .demo-pill { font-size:0.76rem; padding:4px 10px; border-radius:999px; background:rgba(139,92,246,0.12); border:1px solid rgba(139,92,246,0.25); color:var(--purple-light); cursor:pointer; transition:var(--transition); font-weight:600; }
+    .demo-pill:hover { background:rgba(139,92,246,0.25); transform:translateY(-1px); }
+
+    .form-group { margin-bottom:18px; }
+    .form-label { display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px; letter-spacing:0.4px; }
+    .form-input { width:100%; padding:11px 14px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-family:inherit; font-size:0.92rem; transition:var(--transition); outline:none; }
     .form-input:focus { border-color:var(--border-focus); background:rgba(139,92,246,0.06); box-shadow:0 0 0 3px rgba(139,92,246,0.12); }
     .form-input::placeholder { color:var(--text-muted); }
-    select.form-input option { background:#1a1a3e; color:var(--text-primary); }
-    .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:0.9rem; font-weight:600; cursor:pointer; transition:var(--transition); white-space:nowrap; }
+    select.form-input option { background:#13132e; color:var(--text-primary); }
+
+    .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 18px; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:0.88rem; font-weight:600; cursor:pointer; transition:var(--transition); white-space:nowrap; text-decoration:none; }
     .btn-primary { background:linear-gradient(135deg,var(--purple),var(--indigo)); color:white; box-shadow:0 4px 16px rgba(139,92,246,0.35); }
     .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(139,92,246,0.5); }
     .btn-primary:active { transform:translateY(0); }
+    .btn-success { background:linear-gradient(135deg,var(--green),#059669); color:white; box-shadow:0 4px 14px rgba(16,185,129,0.3); }
     .btn-full { width:100%; }
     .btn-ghost { background:transparent; color:var(--text-secondary); border:1px solid var(--border); }
-    .btn-ghost:hover { background:var(--bg-card-hover); color:var(--text-primary); border-color:rgba(255,255,255,0.15); }
-    .btn-danger { background:rgba(239,68,68,0.15); color:var(--red-light); border:1px solid rgba(239,68,68,0.2); }
-    .btn-danger:hover { background:rgba(239,68,68,0.25); border-color:rgba(239,68,68,0.4); }
+    .btn-ghost:hover { background:var(--bg-card-hover); color:var(--text-primary); border-color:rgba(255,255,255,0.16); }
+    .btn-danger { background:rgba(239,68,68,0.15); color:var(--red-light); border:1px solid rgba(239,68,68,0.25); }
+    .btn-danger:hover { background:rgba(239,68,68,0.25); border-color:rgba(239,68,68,0.45); }
     .btn-sm { padding:6px 12px; font-size:0.8rem; border-radius:6px; }
-    .btn-icon { padding:8px; border-radius:8px; }
+    .btn-icon { padding:8px; border-radius:8px; min-width:34px; min-height:34px; }
     .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; }
     @keyframes spin { to{transform:rotate(360deg)} }
-    .alert { padding:12px 16px; border-radius:var(--radius-sm); font-size:0.875rem; margin-bottom:20px; display:flex; align-items:center; gap:8px; animation:slide-in 0.3s ease; }
+
+    .alert { padding:12px 16px; border-radius:var(--radius-sm); font-size:0.875rem; margin-bottom:18px; display:flex; align-items:center; gap:8px; animation:slide-in 0.3s ease; }
     @keyframes slide-in { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
     .alert-error { background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.25); color:var(--red-light); }
     .alert-success { background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.25); color:var(--green-light); }
 
-    /* APP */
+    /* APP SCREEN */
     #app-screen { display:none; min-height:100vh; }
-    .layout { display:flex; min-height:100vh; }
-    .sidebar { width:260px; flex-shrink:0; padding:24px 16px; display:flex; flex-direction:column; border-right:1px solid var(--border); position:sticky; top:0; height:100vh; overflow-y:auto; }
-    .sidebar-logo { display:flex; align-items:center; gap:10px; padding:0 8px; margin-bottom:32px; }
-    .sidebar-logo .logo-icon { width:36px; height:36px; background:linear-gradient(135deg,var(--purple),var(--indigo)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
-    .sidebar-logo span { font-size:1.2rem; font-weight:800; background:linear-gradient(135deg,var(--purple-light),var(--indigo)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:28px; }
-    .stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 12px; text-align:center; transition:var(--transition); }
-    .stat-card:hover { background:var(--bg-card-hover); border-color:rgba(255,255,255,0.12); }
-    .stat-number { font-size:1.6rem; font-weight:800; line-height:1; background:linear-gradient(135deg,var(--purple-light),var(--indigo)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .stat-label { font-size:0.7rem; color:var(--text-muted); margin-top:4px; font-weight:500; text-transform:uppercase; letter-spacing:0.4px; }
-    .progress-ring-container { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; text-align:center; margin-bottom:28px; }
-    .progress-ring-container p { color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.4px; font-weight:500; margin-bottom:10px; }
-    .ring-wrapper { position:relative; display:inline-block; }
-    .progress-ring { transform:rotate(-90deg); }
-    .ring-track { fill:none; stroke:rgba(255,255,255,0.06); stroke-width:6; }
-    .ring-fill { fill:none; stroke:url(#ringGradient); stroke-width:6; stroke-linecap:round; transition:stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); }
-    .ring-text { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-    .ring-percent { font-size:1.4rem; font-weight:800; color:var(--purple-light); line-height:1; }
-    .ring-sub { font-size:0.65rem; color:var(--text-muted); font-weight:500; }
-    .sidebar-nav { flex:1; }
-    .nav-label { font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; font-weight:600; padding:0 8px; margin-bottom:8px; }
-    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); cursor:pointer; transition:var(--transition); color:var(--text-secondary); font-size:0.9rem; font-weight:500; margin-bottom:2px; border:1px solid transparent; }
+    .app-header { height:64px; border-bottom:1px solid var(--border); background:rgba(10,10,26,0.7); backdrop-filter:blur(16px); position:sticky; top:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 24px; }
+    .header-left { display:flex; align-items:center; gap:16px; }
+    .header-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .header-logo .logo-icon { width:34px; height:34px; background:linear-gradient(135deg,var(--purple),var(--indigo)); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+    .header-logo span { font-size:1.25rem; font-weight:800; background:linear-gradient(135deg,var(--purple-light),var(--indigo)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .role-badge { padding:3px 10px; border-radius:999px; font-size:0.72rem; font-weight:800; letter-spacing:0.5px; text-transform:uppercase; }
+    .role-ADMIN { background:rgba(236,72,153,0.15); color:var(--pink); border:1px solid rgba(236,72,153,0.3); }
+    .role-TEACHER { background:rgba(139,92,246,0.15); color:var(--purple-light); border:1px solid rgba(139,92,246,0.3); }
+    .role-STUDENT { background:rgba(16,185,129,0.15); color:var(--green-light); border:1px solid rgba(16,185,129,0.3); }
+
+    .header-right { display:flex; align-items:center; gap:14px; }
+    .notif-wrapper { position:relative; }
+    .notif-btn { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; width:38px; height:38px; display:flex; align-items:center; justify-content:center; cursor:pointer; position:relative; font-size:1.05rem; transition:var(--transition); color:var(--text-secondary); }
+    .notif-btn:hover { background:var(--bg-card-hover); color:var(--text-primary); }
+    .notif-count { position:absolute; top:-4px; right:-4px; background:var(--red); color:white; font-size:0.65rem; font-weight:800; min-width:18px; height:18px; border-radius:999px; display:flex; align-items:center; justify-content:center; padding:0 4px; box-shadow:0 2px 6px rgba(239,68,68,0.5); }
+    .notif-dropdown { position:absolute; right:0; top:48px; width:340px; max-height:420px; overflow-y:auto; background:#11112b; border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:0 16px 40px rgba(0,0,0,0.6); display:none; flex-direction:column; z-index:1000; animation:slide-in 0.2s ease; }
+    .notif-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.85rem; font-weight:700; }
+    .notif-item { padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; cursor:pointer; transition:var(--transition); }
+    .notif-item:hover { background:rgba(255,255,255,0.03); }
+    .notif-item.unread { background:rgba(139,92,246,0.06); }
+    .notif-title { font-weight:600; color:var(--text-primary); margin-bottom:2px; }
+    .notif-desc { color:var(--text-secondary); line-height:1.4; }
+    .notif-time { font-size:0.7rem; color:var(--text-muted); margin-top:4px; }
+
+    .user-profile-menu { display:flex; align-items:center; gap:10px; cursor:pointer; padding:6px 12px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--bg-card); transition:var(--transition); }
+    .user-profile-menu:hover { background:var(--bg-card-hover); }
+    .user-avatar-sm { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--purple),var(--pink)); display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; color:white; }
+    .user-name-sm { font-size:0.84rem; font-weight:600; max-width:120px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    .layout { display:flex; min-height:calc(100vh - 64px); }
+    .sidebar { width:260px; flex-shrink:0; padding:20px 14px; display:flex; flex-direction:column; border-right:1px solid var(--border); position:sticky; top:64px; height:calc(100vh - 64px); overflow-y:auto; }
+    .sidebar-section-title { font-size:0.68rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; font-weight:700; padding:0 10px; margin:16px 0 6px 0; }
+    .nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); cursor:pointer; transition:var(--transition); color:var(--text-secondary); font-size:0.88rem; font-weight:500; margin-bottom:3px; border:1px solid transparent; }
     .nav-item:hover { background:var(--bg-card-hover); color:var(--text-primary); }
-    .nav-item.active { background:rgba(139,92,246,0.12); color:var(--purple-light); border-color:rgba(139,92,246,0.2); }
-    .nav-icon { font-size:1rem; width:20px; text-align:center; }
+    .nav-item.active { background:rgba(139,92,246,0.14); color:var(--purple-light); border-color:rgba(139,92,246,0.25); font-weight:600; }
+    .nav-icon { font-size:1.1rem; width:22px; text-align:center; }
     .nav-badge { margin-left:auto; background:rgba(139,92,246,0.2); color:var(--purple-light); font-size:0.7rem; font-weight:700; padding:2px 7px; border-radius:999px; min-width:20px; text-align:center; }
-    .sidebar-footer { padding-top:16px; border-top:1px solid var(--border); }
-    .user-pill { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:var(--radius-sm); background:var(--bg-card); border:1px solid var(--border); margin-bottom:10px; }
-    .user-avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--purple),var(--pink)); display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; color:white; flex-shrink:0; }
-    .user-info { flex:1; min-width:0; }
-    .user-name { font-size:0.85rem; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .user-email { font-size:0.7rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .main-content { flex:1; padding:32px; max-width:900px; }
-    .main-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:16px; }
-    .main-header h2 { font-size:1.6rem; font-weight:800; letter-spacing:-0.5px; }
-    .main-header h2 span { background:linear-gradient(135deg,var(--purple-light),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .toolbar { display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; align-items:center; }
-    .search-wrapper { flex:1; min-width:200px; position:relative; }
+
+    .main-content { flex:1; padding:28px 36px; max-width:1200px; width:100%; }
+    .view-container { display:none; animation:fade-in 0.25s ease; }
+    .view-container.active { display:block; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:14px; }
+    .page-title { font-size:1.6rem; font-weight:800; letter-spacing:-0.5px; }
+    .page-title span { background:linear-gradient(135deg,var(--purple-light),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .page-subtitle { font-size:0.86rem; color:var(--text-secondary); margin-top:2px; }
+
+    /* STATS & METRICS */
+    .metric-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:16px; margin-bottom:28px; }
+    .metric-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:18px; transition:var(--transition); position:relative; overflow:hidden; }
+    .metric-card:hover { background:var(--bg-card-hover); border-color:rgba(255,255,255,0.12); transform:translateY(-2px); }
+    .metric-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .metric-icon { font-size:1.5rem; }
+    .metric-label { font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
+    .metric-value { font-size:1.9rem; font-weight:900; line-height:1; color:var(--text-primary); }
+    .metric-sub { font-size:0.75rem; color:var(--text-secondary); margin-top:6px; }
+
+    /* DASHBOARD CARD */
+    .dash-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:22px; margin-bottom:24px; }
+    .dash-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .dash-card-title { font-size:1.05rem; font-weight:700; display:flex; align-items:center; gap:8px; }
+
+    /* TASKS STYLES */
+    .toolbar { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+    .search-wrapper { flex:1; min-width:220px; position:relative; }
     .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:0.95rem; pointer-events:none; }
-    .search-input { width:100%; padding:11px 16px 11px 38px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-family:inherit; font-size:0.9rem; outline:none; transition:var(--transition); }
+    .search-input { width:100%; padding:10px 14px 10px 36px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-family:inherit; font-size:0.88rem; outline:none; transition:var(--transition); }
     .search-input:focus { border-color:var(--border-focus); box-shadow:0 0 0 3px rgba(139,92,246,0.12); }
-    .search-input::placeholder { color:var(--text-muted); }
-    .filter-select { padding:11px 14px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-family:inherit; font-size:0.85rem; outline:none; cursor:pointer; transition:var(--transition); }
-    .filter-select:focus { border-color:var(--border-focus); }
-    .filter-select option { background:#1a1a3e; }
-    .task-form-card { margin-bottom:28px; padding:24px; display:none; }
-    .task-form-card.open { display:block; animation:slide-in 0.3s ease; }
-    .task-form-title { font-size:1rem; font-weight:700; color:var(--text-primary); margin-bottom:20px; }
-    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    .form-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+    .filter-select { padding:10px 14px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-family:inherit; font-size:0.85rem; outline:none; cursor:pointer; }
+    .filter-select option { background:#161633; }
+
     .tasks-list { display:flex; flex-direction:column; gap:12px; }
-    .task-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:18px 20px; display:flex; align-items:flex-start; gap:14px; transition:var(--transition); position:relative; overflow:hidden; animation:task-appear 0.35s cubic-bezier(0.4,0,0.2,1); }
-    @keyframes task-appear { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-    .task-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:2px 0 0 2px; }
+    .task-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px 20px; display:flex; align-items:flex-start; gap:14px; transition:var(--transition); position:relative; overflow:hidden; }
+    .task-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
     .task-card.priority-high::before { background:var(--red); }
     .task-card.priority-medium::before { background:var(--amber); }
     .task-card.priority-low::before { background:var(--green); }
-    .task-card:hover { background:var(--bg-card-hover); border-color:rgba(255,255,255,0.12); transform:translateY(-1px); box-shadow:0 8px 24px rgba(0,0,0,0.3); }
-    .task-card.completed { opacity:0.6; }
-    .task-checkbox { flex-shrink:0; width:22px; height:22px; border-radius:6px; border:2px solid var(--border); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:var(--transition); margin-top:1px; }
-    .task-checkbox:hover { border-color:var(--purple-light); background:rgba(139,92,246,0.08); }
+    .task-card:hover { background:var(--bg-card-hover); border-color:rgba(255,255,255,0.12); transform:translateY(-1px); }
+    .task-card.completed { opacity:0.65; }
+    .task-checkbox { flex-shrink:0; width:22px; height:22px; border-radius:6px; border:2px solid var(--border); background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:var(--transition); margin-top:2px; }
+    .task-checkbox:hover { border-color:var(--purple-light); background:rgba(139,92,246,0.1); }
     .task-checkbox.checked { background:linear-gradient(135deg,var(--purple),var(--indigo)); border-color:transparent; }
     .task-checkbox.checked::after { content:'✓'; color:white; font-size:12px; font-weight:700; }
     .task-body { flex:1; min-width:0; }
     .task-title { font-size:0.95rem; font-weight:600; color:var(--text-primary); margin-bottom:4px; }
     .task-card.completed .task-title { text-decoration:line-through; color:var(--text-muted); }
-    .task-desc { font-size:0.82rem; color:var(--text-secondary); margin-bottom:10px; line-height:1.5; }
-    .task-meta { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:999px; font-size:0.72rem; font-weight:600; letter-spacing:0.3px; }
+    .task-desc { font-size:0.83rem; color:var(--text-secondary); margin-bottom:8px; line-height:1.45; }
+    .task-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:0.75rem; }
+    .task-actions { display:flex; gap:6px; flex-shrink:0; }
+
+    /* SUBTASKS */
+    .subtasks-wrapper { margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05); }
+    .subtask-item { display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--text-secondary); margin-bottom:4px; }
+    .subtask-item.checked { text-decoration:line-through; color:var(--text-muted); }
+    .subtask-check { width:15px; height:15px; border-radius:4px; border:1px solid var(--border); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+    .subtask-check.checked { background:var(--purple); border-color:transparent; }
+    .subtask-check.checked::after { content:'✓'; color:white; font-size:9px; font-weight:700; }
+
+    /* CARDS GRID FOR COURSES & ASSIGNMENTS */
+    .cards-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:18px; }
+    .item-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px; transition:var(--transition); display:flex; flex-direction:column; justify-content:space-between; position:relative; }
+    .item-card:hover { background:var(--bg-card-hover); border-color:rgba(255,255,255,0.14); transform:translateY(-2px); }
+    .item-code { font-size:0.75rem; font-weight:800; color:var(--purple-light); letter-spacing:0.8px; text-transform:uppercase; margin-bottom:6px; }
+    .item-title { font-size:1.1rem; font-weight:700; color:var(--text-primary); margin-bottom:8px; }
+    .item-desc { font-size:0.84rem; color:var(--text-secondary); line-height:1.5; margin-bottom:14px; flex:1; }
+    .item-footer { display:flex; align-items:center; justify-content:space-between; padding-top:14px; border-top:1px solid var(--border); gap:8px; flex-wrap:wrap; }
+
+    /* TABLE */
+    .table-container { width:100%; overflow-x:auto; }
+    .data-table { width:100%; border-collapse:collapse; text-align:left; font-size:0.85rem; }
+    .data-table th { padding:12px 14px; border-bottom:1px solid var(--border); color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; }
+    .data-table td { padding:14px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text-secondary); }
+    .data-table tr:hover td { background:rgba(255,255,255,0.02); color:var(--text-primary); }
+
+    /* BADGES */
+    .badge { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:999px; font-size:0.72rem; font-weight:600; }
     .badge-high { background:rgba(239,68,68,0.15); color:var(--red-light); border:1px solid rgba(239,68,68,0.25); }
     .badge-medium { background:rgba(245,158,11,0.15); color:#fbbf24; border:1px solid rgba(245,158,11,0.25); }
     .badge-low { background:rgba(16,185,129,0.15); color:var(--green-light); border:1px solid rgba(16,185,129,0.25); }
-    .badge-done { background:rgba(99,102,241,0.15); color:#a5b4fc; border:1px solid rgba(99,102,241,0.25); }
-    .due-date { font-size:0.75rem; color:var(--text-muted); display:flex; align-items:center; gap:4px; }
-    .due-date.overdue { color:var(--red-light); }
-    .task-actions { display:flex; gap:6px; flex-shrink:0; opacity:0; transition:var(--transition); }
-    .task-card:hover .task-actions { opacity:1; }
-    .empty-state { text-align:center; padding:60px 20px; color:var(--text-muted); }
-    .empty-icon { font-size:3rem; margin-bottom:16px; opacity:0.5; }
-    .empty-state h3 { font-size:1.1rem; color:var(--text-secondary); margin-bottom:8px; font-weight:600; }
-    .empty-state p { font-size:0.875rem; }
+    .badge-submitted { background:rgba(99,102,241,0.15); color:#a5b4fc; border:1px solid rgba(99,102,241,0.25); }
+    .badge-graded { background:rgba(16,185,129,0.15); color:var(--green-light); border:1px solid rgba(16,185,129,0.25); }
+    .badge-urgent { background:rgba(239,68,68,0.2); color:var(--red-light); border:1px solid rgba(239,68,68,0.4); font-weight:800; }
+
+    /* CALENDAR / AGENDA */
+    .agenda-timeline { display:flex; flex-direction:column; gap:10px; }
+    .agenda-item { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px; transition:var(--transition); }
+    .agenda-item:hover { background:var(--bg-card-hover); }
+    .agenda-date-box { text-align:center; min-width:60px; padding:6px 10px; background:rgba(139,92,246,0.1); border-radius:8px; border:1px solid rgba(139,92,246,0.2); }
+    .agenda-day { font-size:1.15rem; font-weight:800; color:var(--purple-light); line-height:1; }
+    .agenda-month { font-size:0.68rem; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-top:2px; }
+
+    /* MODAL */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(8px); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; animation:fade-in 0.2s ease; }
+    @keyframes fade-in { from{opacity:0} to{opacity:1} }
+    .modal { width:100%; max-width:540px; padding:28px; max-height:90vh; overflow-y:auto; animation:modal-in 0.25s cubic-bezier(0.4,0,0.2,1); }
+    @keyframes modal-in { from{opacity:0;transform:scale(0.94) translateY(16px)} to{opacity:1;transform:scale(1) translateY(0)} }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+    .modal-title { font-size:1.15rem; font-weight:700; }
+    .modal-close { width:32px; height:32px; border:none; background:var(--bg-card-hover); border-radius:8px; color:var(--text-secondary); cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; transition:var(--transition); }
+    .modal-close:hover { background:rgba(239,68,68,0.15); color:var(--red-light); }
+    .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:24px; }
 
     /* TOASTS */
     #toast-container { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; }
-    .toast { background:#1a1a3e; border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 18px; display:flex; align-items:center; gap:10px; font-size:0.875rem; color:var(--text-primary); box-shadow:0 8px 32px rgba(0,0,0,0.5); animation:toast-in 0.35s cubic-bezier(0.4,0,0.2,1); min-width:280px; max-width:380px; }
+    .toast { background:#141432; border:1px solid var(--border); border-radius:var(--radius-md); padding:12px 18px; display:flex; align-items:center; gap:10px; font-size:0.875rem; color:var(--text-primary); box-shadow:0 8px 32px rgba(0,0,0,0.5); animation:toast-in 0.35s cubic-bezier(0.4,0,0.2,1); min-width:280px; max-width:400px; }
     @keyframes toast-in { from{opacity:0;transform:translateX(60px)} to{opacity:1;transform:translateX(0)} }
     @keyframes toast-out { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(60px)} }
-    .toast-success { border-color:rgba(16,185,129,0.3); }
-    .toast-error   { border-color:rgba(239,68,68,0.3); }
-    .toast-info    { border-color:rgba(99,102,241,0.3); }
+    .toast-success { border-color:rgba(16,185,129,0.4); }
+    .toast-error   { border-color:rgba(239,68,68,0.4); }
+    .toast-info    { border-color:rgba(99,102,241,0.4); }
 
-    /* MODAL */
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); backdrop-filter:blur(6px); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; animation:fade-in 0.2s ease; }
-    @keyframes fade-in { from{opacity:0} to{opacity:1} }
-    .modal { width:100%; max-width:520px; padding:28px; animation:modal-in 0.3s cubic-bezier(0.4,0,0.2,1); }
-    @keyframes modal-in { from{opacity:0;transform:scale(0.92) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
-    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
-    .modal-title { font-size:1.1rem; font-weight:700; }
-    .modal-close { width:32px; height:32px; border:none; background:var(--bg-card-hover); border-radius:8px; color:var(--text-secondary); cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; transition:var(--transition); }
-    .modal-close:hover { background:rgba(239,68,68,0.15); color:var(--red-light); }
-
-    /* LOADING */
-    #loading-overlay { position:fixed; inset:0; background:var(--bg-primary); z-index:9998; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+    /* LOADING OVERLAY */
+    #loading-overlay { position:fixed; inset:0; background:var(--bg-primary); z-index:9998; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; }
     #loading-overlay .logo-icon { width:64px; height:64px; background:linear-gradient(135deg,var(--purple),var(--indigo)); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-size:28px; animation:pulse-logo 1.5s ease-in-out infinite; }
     #loading-overlay p { color:var(--text-muted); font-size:0.875rem; }
 
-    @media (max-width:768px) { .sidebar{display:none} .main-content{padding:20px 16px} .form-grid{grid-template-columns:1fr} }
-    ::-webkit-scrollbar { width:6px; }
-    ::-webkit-scrollbar-track { background:transparent; }
-    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:999px; }
-    ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.2); }
+    /* EMPTY STATE */
+    .empty-state { text-align:center; padding:50px 20px; color:var(--text-muted); }
+    .empty-icon { font-size:2.8rem; margin-bottom:12px; opacity:0.6; }
+    .empty-state h3 { font-size:1.05rem; color:var(--text-secondary); margin-bottom:6px; font-weight:600; }
+    .empty-state p { font-size:0.85rem; }
+
+    @media (max-width:860px) {
+      .sidebar { display:none; }
+      .main-content { padding:20px 16px; }
+      .header-logo span { display:none; }
+      .user-name-sm { display:none; }
+    }
   </style>
 </head>
 <body>
@@ -221,9 +288,10 @@
 <div class="orb orb-2"></div>
 <div class="orb orb-3"></div>
 <div id="toast-container"></div>
+
 <div id="loading-overlay">
-  <div class="logo-icon">✅</div>
-  <p>Loading TaskFlow…</p>
+  <div class="logo-icon">✨</div>
+  <p>Connecting to TaskFlow LMS…</p>
 </div>
 
 <div id="app">
@@ -231,20 +299,34 @@
   <div id="auth-screen">
     <div class="auth-container">
       <div class="auth-logo">
-        <div class="logo-icon">✅</div>
+        <div class="logo-icon">✨</div>
         <h1>TaskFlow</h1>
-        <p>Your smart productivity companion</p>
+        <p>Enterprise Task & Learning Management System</p>
       </div>
+
       <div class="auth-card glass">
-        <div class="tab-switcher">
-          <button id="tab-login"    class="tab-btn active" onclick="switchTab('login')">Sign In</button>
-          <button id="tab-register" class="tab-btn"        onclick="switchTab('register')">Create Account</button>
+        <!-- Quick Demo Access Pills -->
+        <div class="demo-accounts">
+          <p>⚡ Quick Demo Logins (Click to autofill):</p>
+          <div class="demo-pills">
+            <span class="demo-pill" onclick="quickFill('admin@taskflow.com', 'AdminPassword123!')">👑 Admin</span>
+            <span class="demo-pill" onclick="quickFill('teacher@taskflow.com', 'TeacherPassword123!')">👨‍🏫 Teacher</span>
+            <span class="demo-pill" onclick="quickFill('student@taskflow.com', 'StudentPassword123!')">🎓 Student</span>
+          </div>
         </div>
+
+        <div class="tab-switcher">
+          <button id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
+          <button id="tab-register" class="tab-btn" onclick="switchAuthTab('register')">Create Account</button>
+        </div>
+
         <div id="auth-alert" style="display:none"></div>
+
+        <!-- Login Form -->
         <form id="login-form" onsubmit="handleLogin(event)">
           <div class="form-group">
-            <label class="form-label" for="login-email">Email</label>
-            <input id="login-email" class="form-input" type="email" placeholder="you@example.com" required autocomplete="email" />
+            <label class="form-label" for="login-email">Email Address</label>
+            <input id="login-email" class="form-input" type="email" placeholder="you@taskflow.com" required autocomplete="email" />
           </div>
           <div class="form-group">
             <label class="form-label" for="login-password">Password</label>
@@ -254,18 +336,30 @@
             <span id="login-btn-text">Sign In</span>
           </button>
         </form>
+
+        <!-- Register Form -->
         <form id="register-form" style="display:none" onsubmit="handleRegister(event)">
           <div class="form-group">
             <label class="form-label" for="reg-name">Full Name</label>
-            <input id="reg-name" class="form-input" type="text" placeholder="Jane Doe" required autocomplete="name" />
+            <input id="reg-name" class="form-input" type="text" placeholder="Ada Lovelace" required autocomplete="name" />
           </div>
           <div class="form-group">
-            <label class="form-label" for="reg-email">Email</label>
-            <input id="reg-email" class="form-input" type="email" placeholder="you@example.com" required autocomplete="email" />
+            <label class="form-label" for="reg-email">Email Address</label>
+            <input id="reg-email" class="form-input" type="email" placeholder="ada@taskflow.com" required autocomplete="email" />
           </div>
           <div class="form-group">
-            <label class="form-label" for="reg-password">Password <span style="color:var(--text-muted);font-size:0.75rem;text-transform:none;font-weight:400">(min 8 chars)</span></label>
+            <label class="form-label" for="reg-password">Password (min 8 characters)</label>
             <input id="reg-password" class="form-input" type="password" placeholder="••••••••" required autocomplete="new-password" minlength="8" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-role">Account Role</label>
+            <select id="reg-role" class="form-input">
+              <option value="STUDENT" selected>🎓 Student</option>
+              <option value="TEACHER">👨‍🏫 Teacher</option>
+            </select>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">
+              * Note: Administrator accounts cannot be self-registered and must be assigned by existing admins.
+            </div>
           </div>
           <button id="register-btn" class="btn btn-primary btn-full" type="submit">
             <span id="register-btn-text">Create Account</span>
@@ -277,152 +371,787 @@
 
   <!-- MAIN APP SCREEN -->
   <div id="app-screen">
-    <div class="layout">
-      <aside class="sidebar glass" style="border-radius:0;border-top:none;border-bottom:none;border-left:none;">
-        <div class="sidebar-logo">
-          <div class="logo-icon">✅</div>
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <a href="#" class="header-logo" onclick="navigateToDashboard(); return false;">
+          <div class="logo-icon">✨</div>
           <span>TaskFlow</span>
-        </div>
-        <div class="stats-grid">
-          <div class="stat-card"><div class="stat-number" id="stat-total">0</div><div class="stat-label">Total</div></div>
-          <div class="stat-card"><div class="stat-number" id="stat-pending">0</div><div class="stat-label">Pending</div></div>
-          <div class="stat-card"><div class="stat-number" id="stat-completed">0</div><div class="stat-label">Done</div></div>
-          <div class="stat-card"><div class="stat-number" id="stat-rate">0%</div><div class="stat-label">Rate</div></div>
-        </div>
-        <div class="progress-ring-container">
-          <p>Completion</p>
-          <div class="ring-wrapper">
-            <svg class="progress-ring" width="90" height="90" viewBox="0 0 90 90">
-              <defs>
-                <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#8b5cf6"/>
-                  <stop offset="100%" stop-color="#6366f1"/>
-                </linearGradient>
-              </defs>
-              <circle class="ring-track" cx="45" cy="45" r="36"/>
-              <circle id="ring-fill" class="ring-fill" cx="45" cy="45" r="36" stroke-dasharray="226.2" stroke-dashoffset="226.2"/>
-            </svg>
-            <div class="ring-text">
-              <div class="ring-percent" id="ring-percent">0%</div>
-              <div class="ring-sub">complete</div>
+        </a>
+        <span id="header-role-badge" class="role-badge role-STUDENT">STUDENT</span>
+      </div>
+
+      <div class="header-right">
+        <!-- In-App Notification Bell -->
+        <div class="notif-wrapper">
+          <button class="notif-btn" onclick="toggleNotifDropdown()" title="Notifications">
+            🔔
+            <span id="notif-count" class="notif-count" style="display:none">0</span>
+          </button>
+          <div id="notif-dropdown" class="notif-dropdown">
+            <div class="notif-header">
+              <span>Notifications</span>
+              <button class="btn btn-ghost btn-sm" onclick="markAllNotificationsRead()" style="padding:2px 8px;font-size:0.75rem">Mark all read</button>
+            </div>
+            <div id="notif-list">
+              <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.8rem">No notifications</div>
             </div>
           </div>
         </div>
-        <nav class="sidebar-nav">
-          <div class="nav-label">Filter</div>
-          <div class="nav-item active" id="nav-all"       onclick="setFilter('all')">      <span class="nav-icon">📋</span> All Tasks      <span class="nav-badge" id="badge-all">0</span></div>
-          <div class="nav-item"        id="nav-pending"   onclick="setFilter('pending')">  <span class="nav-icon">⏳</span> Pending        <span class="nav-badge" id="badge-pending">0</span></div>
-          <div class="nav-item"        id="nav-completed" onclick="setFilter('completed')"><span class="nav-icon">✅</span> Completed      <span class="nav-badge" id="badge-completed">0</span></div>
-          <div class="nav-item"        id="nav-high"      onclick="setFilter('high')">     <span class="nav-icon">🔴</span> High Priority  <span class="nav-badge" id="badge-high">0</span></div>
-          <div class="nav-item"        id="nav-overdue"   onclick="setFilter('overdue')">  <span class="nav-icon">⚠️</span> Overdue        <span class="nav-badge" id="badge-overdue">0</span></div>
-        </nav>
-        <div class="sidebar-footer">
-          <div class="user-pill">
-            <div class="user-avatar" id="user-avatar">?</div>
-            <div class="user-info">
-              <div class="user-name"  id="user-name">Loading…</div>
-              <div class="user-email" id="user-email">…</div>
-            </div>
+
+        <!-- User Profile Pill -->
+        <div class="user-profile-menu" onclick="openProfileModal()">
+          <div id="user-avatar-sm" class="user-avatar-sm">U</div>
+          <span id="user-name-sm" class="user-name-sm">User</span>
+          <span style="font-size:0.75rem;color:var(--text-muted)">⚙️</span>
+        </div>
+
+        <button class="btn btn-ghost btn-sm" onclick="logout()" title="Sign Out">
+          🚪 Logout
+        </button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Role-Aware Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section-title">Navigation</div>
+        <div id="sidebar-nav-links">
+          <!-- Dynamic nav injected based on user role -->
+        </div>
+
+        <div style="margin-top:auto;padding-top:20px">
+          <div class="glass" style="padding:14px;border-radius:var(--radius-md);font-size:0.78rem">
+            <div style="font-weight:700;color:var(--text-primary);margin-bottom:2px" id="sidebar-user-name">TaskFlow User</div>
+            <div style="color:var(--text-muted)" id="sidebar-user-email">user@taskflow.com</div>
           </div>
-          <button class="btn btn-ghost btn-full btn-sm" onclick="logout()">🚪 Sign Out</button>
         </div>
       </aside>
 
+      <!-- Main Content Area with Dynamic Views -->
       <main class="main-content">
-        <div class="main-header">
-          <h2>My <span id="view-label">Tasks</span></h2>
-          <button class="btn btn-primary" id="add-task-btn" onclick="openAddForm()">＋ Add Task</button>
-        </div>
-
-        <div class="task-form-card glass" id="task-form-card">
-          <div class="task-form-title" id="form-title">✏️ New Task</div>
-          <form id="task-form" onsubmit="handleSaveTask(event)">
-            <div class="form-group">
-              <label class="form-label" for="task-title">Task Title *</label>
-              <input id="task-title" class="form-input" type="text" placeholder="What needs to be done?" required maxlength="150" />
+        <!-- 1. ADMIN DASHBOARD VIEW -->
+        <div id="view-admin-dashboard" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Admin <span>Dashboard</span></h2>
+              <p class="page-subtitle">Platform-wide statistics, user metrics, and management overview</p>
             </div>
-            <div class="form-group">
-              <label class="form-label" for="task-desc">Description</label>
-              <textarea id="task-desc" class="form-input" rows="3" placeholder="Add details…" maxlength="1000" style="resize:vertical"></textarea>
-            </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label" for="task-priority">Priority</label>
-                <select id="task-priority" class="form-input">
-                  <option value="LOW">🟢 Low</option>
-                  <option value="MEDIUM" selected>🟡 Medium</option>
-                  <option value="HIGH">🔴 High</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="task-due">Due Date</label>
-                <input id="task-due" class="form-input" type="date" />
-              </div>
-            </div>
-            <input type="hidden" id="editing-task-id" value="" />
-            <div class="form-actions">
-              <button type="button" class="btn btn-ghost" onclick="closeForm()">Cancel</button>
-              <button type="submit" class="btn btn-primary" id="save-task-btn">
-                <span id="save-btn-text">Save Task</span>
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div class="toolbar">
-          <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input id="search-input" class="search-input" type="text" placeholder="Search tasks… (Ctrl+K)" oninput="renderTasks()" />
           </div>
-          <select class="filter-select" id="sort-select" onchange="renderTasks()">
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="priority">By Priority</option>
-            <option value="due">By Due Date</option>
-          </select>
+
+          <div class="metric-grid" id="admin-metrics">
+            <!-- Injected via JS -->
+          </div>
+
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">👥 Recent Users</span>
+              <button class="btn btn-ghost btn-sm" onclick="navigateTo('users')">Manage All Users →</button>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-recent-users"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
-        <div id="tasks-list" class="tasks-list"></div>
+        <!-- 2. TEACHER DASHBOARD VIEW -->
+        <div id="view-teacher-dashboard" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Teacher <span>Dashboard</span></h2>
+              <p class="page-subtitle" id="teacher-welcome-sub">Manage your classes, assignments, and student submissions</p>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-primary" onclick="openAddCourseModal()">+ New Class</button>
+              <button class="btn btn-ghost" onclick="openAddAssignmentModal()">+ New Assignment</button>
+            </div>
+          </div>
+
+          <div class="metric-grid" id="teacher-metrics">
+            <!-- Injected via JS -->
+          </div>
+
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">📥 Recent Submissions Awaiting Review</span>
+              <button class="btn btn-ghost btn-sm" onclick="navigateTo('assignments')">View All →</button>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Assignment</th>
+                    <th>Student</th>
+                    <th>Submitted At</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="teacher-pending-submissions"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. STUDENT DASHBOARD VIEW -->
+        <div id="view-student-dashboard" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Student <span>Dashboard</span></h2>
+              <p class="page-subtitle" id="student-welcome-sub">Your personal progress, classes, and upcoming deadlines</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddTaskModal()">+ Add Task</button>
+          </div>
+
+          <div class="metric-grid" id="student-metrics">
+            <!-- Injected via JS -->
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px" class="student-dash-split">
+            <!-- Upcoming Deadlines -->
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title">⏰ Upcoming Deadlines (Next 7 Days)</span>
+              </div>
+              <div id="student-upcoming-list" class="agenda-timeline"></div>
+            </div>
+
+            <!-- Recent Teacher Feedback -->
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <span class="dash-card-title">💬 Teacher Feedback & Grades</span>
+              </div>
+              <div id="student-feedback-list" style="display:flex;flex-direction:column;gap:10px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. TASKS VIEW (Personal To-Do with Categories & Subtasks) -->
+        <div id="view-tasks" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Personal <span>Tasks</span></h2>
+              <p class="page-subtitle">Organize, prioritize, and track your daily work and study items</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddTaskModal()">+ New Task</button>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-wrapper">
+              <span class="search-icon">🔍</span>
+              <input id="tasks-search-input" class="search-input" type="text" placeholder="Search tasks… (Ctrl+K)" oninput="filterAndRenderTasks()" />
+            </div>
+            <select class="filter-select" id="tasks-category-filter" onchange="filterAndRenderTasks()">
+              <option value="">All Categories</option>
+            </select>
+            <select class="filter-select" id="tasks-status-filter" onchange="filterAndRenderTasks()">
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+              <option value="high">High Priority</option>
+              <option value="overdue">Overdue</option>
+            </select>
+            <select class="filter-select" id="tasks-sort-select" onchange="filterAndRenderTasks()">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="priority">By Priority</option>
+              <option value="due">By Due Date</option>
+            </select>
+          </div>
+
+          <div id="tasks-list" class="tasks-list"></div>
+        </div>
+
+        <!-- 5. COURSES VIEW -->
+        <div id="view-courses" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Classes & <span>Courses</span></h2>
+              <p class="page-subtitle" id="courses-subtitle">View and manage courses, enrollment, and class materials</p>
+            </div>
+            <div id="courses-action-btn"></div>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-wrapper">
+              <span class="search-icon">🔍</span>
+              <input id="courses-search-input" class="search-input" type="text" placeholder="Search classes by name or code…" oninput="filterAndRenderCourses()" />
+            </div>
+          </div>
+
+          <div id="courses-cards-grid" class="cards-grid"></div>
+        </div>
+
+        <!-- 6. ASSIGNMENTS VIEW -->
+        <div id="view-assignments" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Class <span>Assignments</span></h2>
+              <p class="page-subtitle" id="assignments-subtitle">Track homework, projects, submissions, and feedback</p>
+            </div>
+            <div id="assignments-action-btn"></div>
+          </div>
+
+          <div class="toolbar">
+            <select class="filter-select" id="assignments-course-filter" onchange="renderAssignmentsList()">
+              <option value="">All Classes</option>
+            </select>
+            <select class="filter-select" id="assignments-status-filter" onchange="renderAssignmentsList()">
+              <option value="all">All Assignments</option>
+              <option value="pending">Pending Submission</option>
+              <option value="submitted">Submitted</option>
+              <option value="graded">Graded</option>
+            </select>
+          </div>
+
+          <div id="assignments-cards-grid" class="cards-grid"></div>
+        </div>
+
+        <!-- 7. CALENDAR / AGENDA VIEW -->
+        <div id="view-calendar" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">Calendar & <span>Agenda</span></h2>
+              <p class="page-subtitle">Unified timeline of personal task deadlines and course assignments</p>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <span class="dash-card-title">📅 Timeline of Deadlines</span>
+            </div>
+            <div id="calendar-agenda-list" class="agenda-timeline"></div>
+          </div>
+        </div>
+
+        <!-- 8. ANNOUNCEMENTS VIEW -->
+        <div id="view-announcements" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">📢 <span>Announcements</span></h2>
+              <p class="page-subtitle">Stay updated with platform news and class announcements</p>
+            </div>
+            <div id="announcement-action-btn"></div>
+          </div>
+
+          <div id="announcements-list" style="display:flex;flex-direction:column;gap:14px"></div>
+        </div>
+
+        <!-- 9. USER MANAGEMENT VIEW (ADMIN ONLY) -->
+        <div id="view-users" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">User <span>Management</span></h2>
+              <p class="page-subtitle">Manage system users, activate/deactivate accounts, and adjust roles</p>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="search-wrapper">
+              <span class="search-icon">🔍</span>
+              <input id="users-search-input" class="search-input" type="text" placeholder="Search by name or email…" oninput="loadAdminUsers()" />
+            </div>
+            <select class="filter-select" id="users-role-filter" onchange="loadAdminUsers()">
+              <option value="">All Roles</option>
+              <option value="ADMIN">ADMIN</option>
+              <option value="TEACHER">TEACHER</option>
+              <option value="STUDENT">STUDENT</option>
+            </select>
+          </div>
+
+          <div class="dash-card">
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. CATEGORIES VIEW (ADMIN ONLY) -->
+        <div id="view-categories" class="view-container">
+          <div class="page-header">
+            <div>
+              <h2 class="page-title">System <span>Categories</span></h2>
+              <p class="page-subtitle">Manage category tags used across tasks and academic modules</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddCategoryModal()">+ New Category</button>
+          </div>
+
+          <div id="categories-grid" class="cards-grid"></div>
+        </div>
       </main>
     </div>
   </div>
 </div>
 
-<!-- Delete Modal -->
-<div id="delete-modal" class="modal-overlay" style="display:none" onclick="handleOverlayClick(event)">
+<!-- ========================================== -->
+<!-- MODALS -->
+<!-- ========================================== -->
+
+<!-- TASK MODAL (Create/Edit Personal Task) -->
+<div id="task-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'task-modal')">
   <div class="modal glass">
     <div class="modal-header">
-      <span class="modal-title">🗑️ Delete Task</span>
-      <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+      <span class="modal-title" id="task-modal-title">✏️ New Task</span>
+      <button class="modal-close" onclick="closeModal('task-modal')">✕</button>
     </div>
-    <p style="color:var(--text-secondary);margin-bottom:24px;font-size:0.9rem">
-      Are you sure you want to delete <strong id="delete-task-title" style="color:var(--text-primary)"></strong>? This cannot be undone.
-    </p>
-    <div style="display:flex;gap:10px;justify-content:flex-end">
-      <button class="btn btn-ghost" onclick="closeDeleteModal()">Cancel</button>
-      <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+    <form id="task-form" onsubmit="handleSaveTask(event)">
+      <input type="hidden" id="task-edit-id" />
+      <div class="form-group">
+        <label class="form-label" for="task-title-input">Task Title *</label>
+        <input id="task-title-input" class="form-input" type="text" placeholder="e.g. Complete Discrete Math proofs" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="task-desc-input">Description</label>
+        <textarea id="task-desc-input" class="form-input" rows="3" placeholder="Additional details or notes…"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label" for="task-category-input">Category</label>
+          <select id="task-category-input" class="form-input"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="task-priority-input">Priority</label>
+          <select id="task-priority-input" class="form-input">
+            <option value="LOW">🟢 Low</option>
+            <option value="MEDIUM" selected>🟡 Medium</option>
+            <option value="HIGH">🔴 High</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="task-due-input">Due Date</label>
+        <input id="task-due-input" class="form-input" type="date" />
+      </div>
+
+      <!-- Subtasks Builder -->
+      <div class="form-group">
+        <label class="form-label">Subtasks Checklist</label>
+        <div id="subtasks-builder-list" style="margin-bottom:8px"></div>
+        <div style="display:flex;gap:8px">
+          <input id="new-subtask-title" class="form-input" type="text" placeholder="Add subtask step…" />
+          <button type="button" class="btn btn-ghost btn-sm" onclick="addSubtaskToForm()">+ Add</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('task-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="save-task-btn">Save Task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- COURSE MODAL (Create/Edit Course) -->
+<div id="course-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'course-modal')">
+  <div class="modal glass">
+    <div class="modal-header">
+      <span class="modal-title" id="course-modal-title">🏫 New Class / Course</span>
+      <button class="modal-close" onclick="closeModal('course-modal')">✕</button>
+    </div>
+    <form id="course-form" onsubmit="handleSaveCourse(event)">
+      <input type="hidden" id="course-edit-id" />
+      <div class="form-group">
+        <label class="form-label" for="course-name-input">Course Name *</label>
+        <input id="course-name-input" class="form-input" type="text" placeholder="e.g. Distributed Computing" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="course-code-input">Course Code *</label>
+        <input id="course-code-input" class="form-input" type="text" placeholder="e.g. CS305" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="course-desc-input">Description</label>
+        <textarea id="course-desc-input" class="form-input" rows="3" placeholder="Syllabus and prerequisites…"></textarea>
+      </div>
+      <div class="form-group" id="course-teacher-select-group" style="display:none">
+        <label class="form-label" for="course-teacher-select">Assign Teacher</label>
+        <select id="course-teacher-select" class="form-input"></select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('course-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="save-course-btn">Save Course</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ENROLL STUDENT MODAL -->
+<div id="enroll-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'enroll-modal')">
+  <div class="modal glass">
+    <div class="modal-header">
+      <span class="modal-title">🎓 Enroll Student into Class</span>
+      <button class="modal-close" onclick="closeModal('enroll-modal')">✕</button>
+    </div>
+    <form id="enroll-form" onsubmit="handleEnrollStudent(event)">
+      <input type="hidden" id="enroll-course-id" />
+      <div class="form-group">
+        <label class="form-label" for="enroll-student-email">Student Email Address *</label>
+        <input id="enroll-student-email" class="form-input" type="email" placeholder="student@taskflow.com" required />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('enroll-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Enroll Student</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CLASS STUDENTS PROGRESS MODAL -->
+<div id="class-students-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'class-students-modal')">
+  <div class="modal glass" style="max-width:680px">
+    <div class="modal-header">
+      <span class="modal-title" id="class-students-title">👥 Enrolled Students & Progress</span>
+      <button class="modal-close" onclick="closeModal('class-students-modal')">✕</button>
+    </div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Email</th>
+            <th>Completed</th>
+            <th>Avg Grade</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="class-students-table-body"></tbody>
+      </table>
     </div>
   </div>
 </div>
 
+<!-- ASSIGNMENT MODAL -->
+<div id="assignment-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'assignment-modal')">
+  <div class="modal glass">
+    <div class="modal-header">
+      <span class="modal-title" id="assignment-modal-title">📑 New Assignment</span>
+      <button class="modal-close" onclick="closeModal('assignment-modal')">✕</button>
+    </div>
+    <form id="assignment-form" onsubmit="handleSaveAssignment(event)">
+      <input type="hidden" id="assignment-edit-id" />
+      <div class="form-group" id="assignment-course-select-group">
+        <label class="form-label" for="assignment-course-select">Select Class *</label>
+        <select id="assignment-course-select" class="form-input" required></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="assignment-title-input">Title *</label>
+        <input id="assignment-title-input" class="form-input" type="text" placeholder="e.g. Midterm Programming Project" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="assignment-instructions-input">Instructions</label>
+        <textarea id="assignment-instructions-input" class="form-input" rows="3" placeholder="Detailed assignment instructions and deliverables…"></textarea>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label" for="assignment-due-input">Due Date</label>
+          <input id="assignment-due-input" class="form-input" type="date" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="assignment-points-input">Points Possible</label>
+          <input id="assignment-points-input" class="form-input" type="number" min="1" value="100" required />
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label" for="assignment-priority-input">Priority</label>
+          <select id="assignment-priority-input" class="form-input">
+            <option value="LOW">🟢 Low</option>
+            <option value="MEDIUM" selected>🟡 Medium</option>
+            <option value="HIGH">🔴 High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="assignment-attach-input">Attachment URL (Optional)</label>
+          <input id="assignment-attach-input" class="form-input" type="url" placeholder="https://…" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('assignment-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="save-assignment-btn">Save Assignment</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- STUDENT SUBMISSION MODAL -->
+<div id="submit-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'submit-modal')">
+  <div class="modal glass">
+    <div class="modal-header">
+      <span class="modal-title" id="submit-modal-title">📤 Submit Assignment</span>
+      <button class="modal-close" onclick="closeModal('submit-modal')">✕</button>
+    </div>
+    <form id="submission-form" onsubmit="handleSubmitAssignment(event)">
+      <input type="hidden" id="submit-assignment-id" />
+      <div class="form-group">
+        <label class="form-label" for="submit-notes-input">Submission Notes / Summary *</label>
+        <textarea id="submit-notes-input" class="form-input" rows="4" placeholder="Describe your solution, methodology, or answers…" required></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="submit-url-input">Project Link / Attachment URL (Optional)</label>
+        <input id="submit-url-input" class="form-input" type="url" placeholder="https://github.com/..." />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('submit-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit Work</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TEACHER VIEW SUBMISSIONS MODAL -->
+<div id="view-submissions-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'view-submissions-modal')">
+  <div class="modal glass" style="max-width:760px">
+    <div class="modal-header">
+      <span class="modal-title" id="view-submissions-title">📥 Student Submissions</span>
+      <button class="modal-close" onclick="closeModal('view-submissions-modal')">✕</button>
+    </div>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Notes & Attachment</th>
+            <th>Submitted</th>
+            <th>Status / Grade</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="view-submissions-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- GRADE SUBMISSION MODAL -->
+<div id="grade-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'grade-modal')">
+  <div class="modal glass">
+    <div class="modal-header">
+      <span class="modal-title">🎯 Grade & Provide Feedback</span>
+      <button class="modal-close" onclick="closeModal('grade-modal')">✕</button>
+    </div>
+    <form id="grade-form" onsubmit="handleGradeSubmission(event)">
+      <input type="hidden" id="grade-assignment-id" />
+      <input type="hidden" id="grade-submission-id" />
+      <div style="font-size:0.86rem;color:var(--text-secondary);margin-bottom:14px" id="grade-student-info"></div>
+      <div class="form-group">
+        <label class="form-label" for="grade-score-input">Score / Grade *</label>
+        <input id="grade-score-input" class="form-input" type="number" step="0.5" min="0" placeholder="e.g. 95" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="grade-feedback-input">Teacher Feedback & Comments</label>
+        <textarea id="grade-feedback-input" class="form-input" rows="4" placeholder="Detailed constructive feedback for the student…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('grade-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Grade</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ANNOUNCEMENT MODAL -->
+<div id="announcement-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'announcement-modal')">
+  <div class="modal glass">
+    <div class="modal-header">
+      <span class="modal-title">📢 Post Announcement</span>
+      <button class="modal-close" onclick="closeModal('announcement-modal')">✕</button>
+    </div>
+    <form id="announcement-form" onsubmit="handleSaveAnnouncement(event)">
+      <div class="form-group">
+        <label class="form-label" for="ann-title-input">Title *</label>
+        <input id="ann-title-input" class="form-input" type="text" placeholder="Announcement headline…" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ann-target-select">Scope / Target</label>
+        <select id="ann-target-select" class="form-input"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ann-priority-select">Urgency</label>
+        <select id="ann-priority-select" class="form-input">
+          <option value="NORMAL" selected>Normal</option>
+          <option value="HIGH">High</option>
+          <option value="URGENT">Urgent 🚨</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ann-content-input">Announcement Content *</label>
+        <textarea id="ann-content-input" class="form-input" rows="4" placeholder="Write announcement details…" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('announcement-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Publish Announcement</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CATEGORY MODAL (Admin) -->
+<div id="category-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'category-modal')">
+  <div class="modal glass">
+    <div class="modal-header">
+      <span class="modal-title" id="cat-modal-title">🏷️ New Category</span>
+      <button class="modal-close" onclick="closeModal('category-modal')">✕</button>
+    </div>
+    <form id="category-form" onsubmit="handleSaveCategory(event)">
+      <input type="hidden" id="cat-edit-id" />
+      <div class="form-group">
+        <label class="form-label" for="cat-name-input">Category Name *</label>
+        <input id="cat-name-input" class="form-input" type="text" placeholder="e.g. Lab Work" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="cat-desc-input">Description</label>
+        <input id="cat-desc-input" class="form-input" type="text" placeholder="Brief category description…" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="cat-color-input">Badge Color</label>
+        <input id="cat-color-input" class="form-input" type="color" value="#8b5cf6" style="height:44px;cursor:pointer" />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('category-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Category</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT USER MODAL (Admin) -->
+<div id="edit-user-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'edit-user-modal')">
+  <div class="modal glass">
+    <div class="modal-header">
+      <span class="modal-title">👤 Edit User Account</span>
+      <button class="modal-close" onclick="closeModal('edit-user-modal')">✕</button>
+    </div>
+    <form id="edit-user-form" onsubmit="handleSaveUser(event)">
+      <input type="hidden" id="edit-user-id" />
+      <div class="form-group">
+        <label class="form-label" for="edit-user-name">Full Name *</label>
+        <input id="edit-user-name" class="form-input" type="text" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="edit-user-email">Email Address *</label>
+        <input id="edit-user-email" class="form-input" type="email" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="edit-user-role">Role</label>
+        <select id="edit-user-role" class="form-input">
+          <option value="ADMIN">ADMIN</option>
+          <option value="TEACHER">TEACHER</option>
+          <option value="STUDENT">STUDENT</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="edit-user-active">Account Status</label>
+        <select id="edit-user-active" class="form-input">
+          <option value="true">Active</option>
+          <option value="false">Deactivated</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('edit-user-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- PROFILE SETTINGS MODAL -->
+<div id="profile-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'profile-modal')">
+  <div class="modal glass">
+    <div class="modal-header">
+      <span class="modal-title">👤 My Profile Settings</span>
+      <button class="modal-close" onclick="closeModal('profile-modal')">✕</button>
+    </div>
+    <form id="profile-form" onsubmit="handleSaveProfile(event)">
+      <div class="form-group">
+        <label class="form-label" for="profile-name">Display Name</label>
+        <input id="profile-name" class="form-input" type="text" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="profile-email">Email (read-only)</label>
+        <input id="profile-email" class="form-input" type="email" disabled style="opacity:0.6" />
+      </div>
+      <div style="margin:16px 0 10px 0;border-top:1px solid var(--border);padding-top:14px">
+        <span style="font-size:0.85rem;font-weight:700;color:var(--text-primary)">Change Password</span>
+        <p style="font-size:0.75rem;color:var(--text-muted)">Leave blank if you do not wish to change your password.</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="profile-curr-pass">Current Password</label>
+        <input id="profile-curr-pass" class="form-input" type="password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="profile-new-pass">New Password (min 8 chars)</label>
+        <input id="profile-new-pass" class="form-input" type="password" placeholder="••••••••" minlength="8" autocomplete="new-password" />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('profile-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CONFIRM DESTRUCTIVE ACTION MODAL -->
+<div id="confirm-modal" class="modal-overlay" style="display:none" onclick="handleModalOverlayClick(event, 'confirm-modal')">
+  <div class="modal glass" style="max-width:440px">
+    <div class="modal-header">
+      <span class="modal-title" id="confirm-modal-title">⚠️ Confirm Action</span>
+      <button class="modal-close" onclick="closeModal('confirm-modal')">✕</button>
+    </div>
+    <p id="confirm-modal-msg" style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:24px"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('confirm-modal')">Cancel</button>
+      <button class="btn btn-danger" id="confirm-modal-btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- SCRIPT: APPLICATION LOGIC -->
+<!-- ========================================== -->
 <script>
-// Smart API URL resolution: relative if served on port 8081, localhost:8081 if running locally or opened as file, else production
+// Smart API URL resolution
 const API_BASE = window.TASKFLOW_API_URL || (
   (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1'))
     ? (window.location.port === '8081' ? '' : 'http://localhost:8081')
     : (window.location.protocol === 'file:' ? 'http://localhost:8081' : 'https://taskflow-backend.onrender.com')
 );
 
-// ── State ─────────────────────────────────────────────────────────────────────
-let authToken     = localStorage.getItem('tf_token') || null;
-let currentUser   = null;
-let allTasks      = [];
-let currentFilter = 'all';
-let deleteTarget  = null;
+// State
+let authToken       = localStorage.getItem('tf_token') || null;
+let currentUser     = null;
+let currentView     = 'dashboard';
+let allTasks        = [];
+let allCourses      = [];
+let allAssignments  = [];
+let allCategories   = [];
+let tempSubtasks    = [];
+let confirmCallback = null;
 
 const $ = id => document.getElementById(id);
 
-// ── API Helper ────────────────────────────────────────────────────────────────
+// API Helper with JWT Authorization
 async function api(method, path, body) {
   const opts = {
     method,
@@ -435,30 +1164,38 @@ async function api(method, path, body) {
   const res = await fetch(API_BASE + path, opts);
   if (res.status === 204) return null;
   const json = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(json?.error || json?.message || 'Request failed');
+  if (!res.ok) {
+    throw new Error(json?.message || json?.error || 'Request failed with status ' + res.status);
+  }
   return json;
 }
 
-// ── Toast ─────────────────────────────────────────────────────────────────────
+// Toast Notifications
 function toast(msg, type = 'success') {
   const icons = { success: '✅', error: '❌', info: 'ℹ️' };
   const el = document.createElement('div');
   el.className = `toast toast-${type}`;
-  el.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
+  el.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${msg}</span>`;
   $('toast-container').appendChild(el);
   setTimeout(() => {
     el.style.animation = 'toast-out 0.35s ease forwards';
     setTimeout(() => el.remove(), 350);
-  }, 3000);
+  }, 3200);
 }
 
-// ── Auth ──────────────────────────────────────────────────────────────────────
-function switchTab(tab) {
+// Authentication Tabs & Quick Login
+function switchAuthTab(tab) {
   $('login-form').style.display    = tab === 'login'    ? 'block' : 'none';
   $('register-form').style.display = tab === 'register' ? 'block' : 'none';
   $('tab-login').classList.toggle('active',    tab === 'login');
   $('tab-register').classList.toggle('active', tab === 'register');
   $('auth-alert').style.display = 'none';
+}
+
+function quickFill(email, pass) {
+  switchAuthTab('login');
+  $('login-email').value = email;
+  $('login-password').value = pass;
 }
 
 function showAuthAlert(msg, type = 'error') {
@@ -475,12 +1212,12 @@ async function handleLogin(e) {
   btn.disabled = true;
   try {
     const data = await api('POST', '/api/auth/login', {
-      email:    $('login-email').value.trim(),
+      email: $('login-email').value.trim(),
       password: $('login-password').value
     });
     authToken = data.token;
     localStorage.setItem('tf_token', authToken);
-    toast('Welcome back! 👋');
+    toast(`Welcome back, ${data.name}! 👋`);
     await loadApp();
   } catch (err) {
     showAuthAlert(err.message);
@@ -497,13 +1234,15 @@ async function handleRegister(e) {
   btn.disabled = true;
   try {
     await api('POST', '/api/auth/register', {
-      name:     $('reg-name').value.trim(),
-      email:    $('reg-email').value.trim(),
-      password: $('reg-password').value
+      name: $('reg-name').value.trim(),
+      email: $('reg-email').value.trim(),
+      password: $('reg-password').value,
+      role: $('reg-role').value
     });
-    showAuthAlert('Account created! Please sign in.', 'success');
-    switchTab('login');
+    showAuthAlert('Account created successfully! Please sign in.', 'success');
+    switchAuthTab('login');
     $('login-email').value = $('reg-email').value;
+    $('login-password').value = '';
   } catch (err) {
     showAuthAlert(err.message);
   } finally {
@@ -512,188 +1251,654 @@ async function handleRegister(e) {
   }
 }
 
-// ── App Load ──────────────────────────────────────────────────────────────────
-async function loadApp() {
-  try {
-    currentUser = await api('GET', '/api/users/me');
-    allTasks    = await api('GET', '/api/tasks');
-    $('user-name').textContent  = currentUser.name;
-    $('user-email').textContent = currentUser.email;
-    $('user-avatar').textContent = currentUser.name.charAt(0).toUpperCase();
-    $('auth-screen').style.display = 'none';
-    $('app-screen').style.display  = 'block';
-    updateStats();
-    renderTasks();
-  } catch(err) {
-    logout(false);
-  }
-}
-
 function logout(showMsg = true) {
-  authToken = null; currentUser = null; allTasks = [];
+  authToken = null;
+  currentUser = null;
+  allTasks = [];
+  allCourses = [];
+  allAssignments = [];
   localStorage.removeItem('tf_token');
-  $('app-screen').style.display  = 'none';
+  $('app-screen').style.display = 'none';
   $('auth-screen').style.display = 'flex';
   if (showMsg) toast('Signed out successfully', 'info');
 }
 
-// ── Filter ────────────────────────────────────────────────────────────────────
-function setFilter(filter) {
-  currentFilter = filter;
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  $('nav-' + filter)?.classList.add('active');
-  const labels = { all:'Tasks', pending:'Pending Tasks', completed:'Completed Tasks', high:'High Priority', overdue:'Overdue Tasks' };
-  $('view-label').textContent = labels[filter] || 'Tasks';
-  renderTasks();
-}
+// ── Application Initialization ────────────────────────────────────────────────
+async function loadApp() {
+  try {
+    currentUser = await api('GET', '/api/users/me');
 
-function applyFilter(tasks) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  switch(currentFilter) {
-    case 'pending':   return tasks.filter(t => !t.completed);
-    case 'completed': return tasks.filter(t => t.completed);
-    case 'high':      return tasks.filter(t => t.priority === 'HIGH');
-    case 'overdue':   return tasks.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) < today);
-    default:          return tasks;
+    // Header updates
+    $('user-name-sm').textContent = currentUser.name;
+    $('user-avatar-sm').textContent = currentUser.name.charAt(0).toUpperCase();
+    $('sidebar-user-name').textContent = currentUser.name;
+    $('sidebar-user-email').textContent = currentUser.email;
+
+    const badge = $('header-role-badge');
+    badge.className = `role-badge role-${currentUser.role}`;
+    badge.textContent = currentUser.role;
+
+    // Build sidebar navigation dynamically
+    buildSidebarNav();
+
+    // Load initial categories & notifications
+    await Promise.all([loadCategories(), loadNotifications()]);
+
+    // Show app, hide auth
+    $('auth-screen').style.display = 'none';
+    $('app-screen').style.display = 'block';
+
+    // Role-aware default redirect
+    navigateToDashboard();
+  } catch (err) {
+    console.error('Failed to load user profile:', err);
+    logout(false);
   }
 }
 
-function applySort(tasks) {
-  const sort = $('sort-select')?.value || 'newest';
-  const po = { HIGH:0, MEDIUM:1, LOW:2 };
-  return [...tasks].sort((a,b) => {
-    if (sort === 'newest')   return b.id - a.id;
-    if (sort === 'oldest')   return a.id - b.id;
-    if (sort === 'priority') return (po[a.priority]??1) - (po[b.priority]??1);
+function navigateToDashboard() {
+  if (currentUser.role === 'ADMIN') {
+    navigateTo('admin-dashboard');
+  } else if (currentUser.role === 'TEACHER') {
+    navigateTo('teacher-dashboard');
+  } else {
+    navigateTo('student-dashboard');
+  }
+}
+
+// Build Sidebar Navigation according to Role
+function buildSidebarNav() {
+  const container = $('sidebar-nav-links');
+  container.innerHTML = '';
+
+  const navs = [];
+
+  if (currentUser.role === 'ADMIN') {
+    navs.push({ id: 'admin-dashboard', label: 'Dashboard', icon: '📊' });
+    navs.push({ id: 'users', label: 'User Management', icon: '👥' });
+    navs.push({ id: 'courses', label: 'Class Management', icon: '🏫' });
+    navs.push({ id: 'assignments', label: 'Assignments', icon: '📑' });
+    navs.push({ id: 'tasks', label: 'Personal Tasks', icon: '📋' });
+    navs.push({ id: 'calendar', label: 'Calendar / Agenda', icon: '📅' });
+    navs.push({ id: 'announcements', label: 'Announcements', icon: '📢' });
+    navs.push({ id: 'categories', label: 'Categories', icon: '🏷️' });
+  } else if (currentUser.role === 'TEACHER') {
+    navs.push({ id: 'teacher-dashboard', label: 'Dashboard', icon: '📊' });
+    navs.push({ id: 'courses', label: 'My Classes', icon: '🏫' });
+    navs.push({ id: 'assignments', label: 'Class Assignments', icon: '📑' });
+    navs.push({ id: 'tasks', label: 'Personal Tasks', icon: '📋' });
+    navs.push({ id: 'calendar', label: 'Schedule & Deadlines', icon: '📅' });
+    navs.push({ id: 'announcements', label: 'Announcements', icon: '📢' });
+  } else {
+    // STUDENT
+    navs.push({ id: 'student-dashboard', label: 'Dashboard', icon: '📊' });
+    navs.push({ id: 'tasks', label: 'Personal Tasks', icon: '📋' });
+    navs.push({ id: 'courses', label: 'My Classes', icon: '🏫' });
+    navs.push({ id: 'assignments', label: 'Assignments', icon: '📝' });
+    navs.push({ id: 'calendar', label: 'Calendar & Deadlines', icon: '📅' });
+    navs.push({ id: 'announcements', label: 'Announcements', icon: '📢' });
+  }
+
+  navs.forEach(n => {
+    const item = document.createElement('div');
+    item.className = 'nav-item';
+    item.id = `nav-${n.id}`;
+    item.onclick = () => navigateTo(n.id);
+    item.innerHTML = `<span class="nav-icon">${n.icon}</span><span>${n.label}</span>`;
+    container.appendChild(item);
+  });
+}
+
+function navigateTo(viewId) {
+  currentView = viewId;
+  document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const viewEl = $(`view-${viewId}`);
+  if (viewEl) viewEl.classList.add('active');
+
+  const navEl = $(`nav-${viewId}`);
+  if (navEl) navEl.classList.add('active');
+
+  // Trigger data loader for view
+  if (viewId === 'admin-dashboard') loadAdminDashboard();
+  else if (viewId === 'teacher-dashboard') loadTeacherDashboard();
+  else if (viewId === 'student-dashboard') loadStudentDashboard();
+  else if (viewId === 'tasks') loadTasks();
+  else if (viewId === 'courses') loadCourses();
+  else if (viewId === 'assignments') loadAssignments();
+  else if (viewId === 'calendar') loadCalendar();
+  else if (viewId === 'announcements') loadAnnouncements();
+  else if (viewId === 'users') loadAdminUsers();
+  else if (viewId === 'categories') loadCategoriesView();
+}
+
+// ── Notifications ─────────────────────────────────────────────────────────────
+async function loadNotifications() {
+  try {
+    const unread = await api('GET', '/api/notifications/unread-count');
+    const badge = $('notif-count');
+    if (unread.unreadCount > 0) {
+      badge.textContent = unread.unreadCount > 99 ? '99+' : unread.unreadCount;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    const notifs = await api('GET', '/api/notifications');
+    const list = $('notif-list');
+    list.innerHTML = '';
+    if (notifs.length === 0) {
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.8rem">No notifications</div>';
+      return;
+    }
+    notifs.forEach(n => {
+      const item = document.createElement('div');
+      item.className = `notif-item ${n.isRead ? '' : 'unread'}`;
+      item.onclick = () => readAndOpenNotification(n);
+      item.innerHTML = `
+        <div class="notif-title">${esc(n.title)}</div>
+        <div class="notif-desc">${esc(n.message)}</div>
+        <div class="notif-time">${formatDate(n.createdAt)}</div>
+      `;
+      list.appendChild(item);
+    });
+  } catch (e) {
+    console.error('Failed to load notifications', e);
+  }
+}
+
+function toggleNotifDropdown() {
+  const dd = $('notif-dropdown');
+  dd.style.display = dd.style.display === 'flex' ? 'none' : 'flex';
+}
+
+async function markAllNotificationsRead() {
+  try {
+    await api('PATCH', '/api/notifications/read-all');
+    $('notif-count').style.display = 'none';
+    document.querySelectorAll('.notif-item').forEach(el => el.classList.remove('unread'));
+    toast('All notifications marked as read', 'info');
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+async function readAndOpenNotification(n) {
+  if (!n.isRead) {
+    await api('PATCH', `/api/notifications/${n.id}/read`).catch(() => {});
+    loadNotifications();
+  }
+  $('notif-dropdown').style.display = 'none';
+  if (n.type === 'ASSIGNMENT' || n.type === 'FEEDBACK') {
+    navigateTo('assignments');
+  } else if (n.type === 'ANNOUNCEMENT') {
+    navigateTo('announcements');
+  } else if (n.type === 'DUE_DATE') {
+    navigateTo('calendar');
+  }
+}
+
+// ── Admin Dashboard ───────────────────────────────────────────────────────────
+async function loadAdminDashboard() {
+  try {
+    const data = await api('GET', '/api/dashboard/admin');
+    const grid = $('admin-metrics');
+    grid.innerHTML = `
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Total Users</span><span class="metric-icon">👥</span></div>
+        <div class="metric-value">${data.totalUsers}</div>
+        <div class="metric-sub">${data.activeCount} active · ${data.inactiveCount} inactive</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Roles Breakdown</span><span class="metric-icon">🎓</span></div>
+        <div class="metric-value">${data.studentCount} Students</div>
+        <div class="metric-sub">${data.teacherCount} Teachers · ${data.adminCount} Admins</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Total Classes</span><span class="metric-icon">🏫</span></div>
+        <div class="metric-value">${data.totalCourses}</div>
+        <div class="metric-sub">${data.totalAssignments} class assignments</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Submissions</span><span class="metric-icon">📊</span></div>
+        <div class="metric-value">${data.totalSubmissions}</div>
+        <div class="metric-sub">${data.gradedSubmissions} graded (${data.completionRate}%)</div>
+      </div>
+    `;
+
+    const recent = $('admin-recent-users');
+    recent.innerHTML = '';
+    (data.recentUsers || []).forEach(u => {
+      recent.innerHTML += `
+        <tr>
+          <td>#${u.id}</td>
+          <td style="font-weight:600;color:var(--text-primary)">${esc(u.name)}</td>
+          <td>${esc(u.email)}</td>
+          <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+          <td><span class="badge ${u.active ? 'badge-low' : 'badge-high'}">${u.active ? 'Active' : 'Deactivated'}</span></td>
+        </tr>
+      `;
+    });
+  } catch (err) {
+    toast('Error loading admin dashboard: ' + err.message, 'error');
+  }
+}
+
+// ── Teacher Dashboard ─────────────────────────────────────────────────────────
+async function loadTeacherDashboard() {
+  try {
+    const data = await api('GET', '/api/dashboard/teacher');
+    $('teacher-welcome-sub').textContent = `Welcome back, ${data.teacherName}! Here is the latest activity in your classes.`;
+
+    const grid = $('teacher-metrics');
+    grid.innerHTML = `
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Classes Taught</span><span class="metric-icon">🏫</span></div>
+        <div class="metric-value">${data.totalClasses}</div>
+        <div class="metric-sub">${data.totalStudents} total student enrollments</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Active Assignments</span><span class="metric-icon">📑</span></div>
+        <div class="metric-value">${data.totalAssignments}</div>
+        <div class="metric-sub">${data.upcomingAssignments?.length || 0} upcoming due dates</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Pending Reviews</span><span class="metric-icon">📥</span></div>
+        <div class="metric-value" style="color:var(--amber)">${data.pendingSubmissions}</div>
+        <div class="metric-sub">${data.gradedSubmissions} graded submissions</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Grading Completion</span><span class="metric-icon">🎯</span></div>
+        <div class="metric-value" style="color:var(--green-light)">${data.completionRate}%</div>
+        <div class="metric-sub">Across all class assignments</div>
+      </div>
+    `;
+
+    const tbody = $('teacher-pending-submissions');
+    tbody.innerHTML = '';
+    const pendingList = data.pendingList || [];
+    if (pendingList.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--text-muted)">All caught up! No submissions awaiting review. 🎉</td></tr>';
+      return;
+    }
+    pendingList.forEach(s => {
+      tbody.innerHTML += `
+        <tr>
+          <td style="font-weight:600;color:var(--text-primary)">${esc(s.assignmentTitle)}</td>
+          <td>${esc(s.studentName)} <span style="font-size:0.75rem;color:var(--text-muted)">(${esc(s.studentEmail)})</span></td>
+          <td>${formatDate(s.submittedAt)}</td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick="openGradeModal(${s.assignmentId}, ${s.id}, '${esc(s.studentName)}', ${s.assignmentPoints})">
+              Grade Now
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+  } catch (err) {
+    toast('Error loading teacher dashboard: ' + err.message, 'error');
+  }
+}
+
+// ── Student Dashboard ─────────────────────────────────────────────────────────
+async function loadStudentDashboard() {
+  try {
+    const data = await api('GET', '/api/dashboard/student');
+    $('student-welcome-sub').textContent = `Welcome, ${data.studentName}! Keep up the great momentum.`;
+
+    const grid = $('student-metrics');
+    grid.innerHTML = `
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Personal Tasks</span><span class="metric-icon">📋</span></div>
+        <div class="metric-value">${data.completedTasks}/${data.totalTasks}</div>
+        <div class="metric-sub">${data.pendingTasks} pending · ${data.overdueTasks} overdue</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Enrolled Classes</span><span class="metric-icon">🏫</span></div>
+        <div class="metric-value">${data.enrolledClassesCount}</div>
+        <div class="metric-sub">${data.totalAssignments} total assignments</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Class Submissions</span><span class="metric-icon">📝</span></div>
+        <div class="metric-value">${data.submittedAssignments}/${data.totalAssignments}</div>
+        <div class="metric-sub">${data.pendingAssignments} remaining to submit</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-top"><span class="metric-label">Average Grade</span><span class="metric-icon">🏆</span></div>
+        <div class="metric-value" style="color:var(--purple-light)">${data.averageGrade != null ? data.averageGrade + '%' : 'N/A'}</div>
+        <div class="metric-sub">${data.gradedAssignments} assignments graded</div>
+      </div>
+    `;
+
+    // Upcoming deadlines list
+    const upList = $('student-upcoming-list');
+    upList.innerHTML = '';
+    const upItems = data.upcomingItems || [];
+    if (upItems.length === 0) {
+      upList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.85rem">No deadlines due in the next 7 days! 🎉</div>';
+    } else {
+      upItems.forEach(item => {
+        upList.innerHTML += `
+          <div class="agenda-item">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span style="font-size:1.2rem">${item.type === 'ASSIGNMENT' ? '📝' : '📋'}</span>
+              <div>
+                <div style="font-weight:600;color:var(--text-primary)">${esc(item.title)}</div>
+                <div style="font-size:0.75rem;color:var(--text-muted)">${item.courseCode ? item.courseCode + ' · ' : ''}Due: ${formatDate(item.dueDate)}</div>
+              </div>
+            </div>
+            <span class="badge badge-${(item.priority || 'medium').toLowerCase()}">${esc(item.priority || 'MEDIUM')}</span>
+          </div>
+        `;
+      });
+    }
+
+    // Recent feedback list
+    const fbList = $('student-feedback-list');
+    fbList.innerHTML = '';
+    const feedbacks = data.recentFeedback || [];
+    if (feedbacks.length === 0) {
+      fbList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.85rem">No teacher feedback yet.</div>';
+    } else {
+      feedbacks.forEach(fb => {
+        fbList.innerHTML += `
+          <div class="glass" style="padding:14px;border-radius:var(--radius-sm)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-weight:700;color:var(--text-primary);font-size:0.9rem">${esc(fb.assignmentTitle)}</span>
+              <span class="badge badge-graded" style="font-size:0.8rem">Grade: ${fb.grade}/${fb.points}</span>
+            </div>
+            <div style="font-size:0.78rem;color:var(--purple-light);margin-bottom:6px">${esc(fb.courseName)}</div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);font-style:italic;line-height:1.4">"${esc(fb.feedback)}"</div>
+          </div>
+        `;
+      });
+    }
+  } catch (err) {
+    toast('Error loading student dashboard: ' + err.message, 'error');
+  }
+}
+
+// ── Categories Management ─────────────────────────────────────────────────────
+async function loadCategories() {
+  try {
+    allCategories = await api('GET', '/api/categories');
+    populateCategoryDropdowns();
+  } catch (e) {
+    console.error('Failed to load categories', e);
+  }
+}
+
+function populateCategoryDropdowns() {
+  const taskCatFilter = $('tasks-category-filter');
+  const taskCatInput  = $('task-category-input');
+
+  if (taskCatFilter) {
+    taskCatFilter.innerHTML = '<option value="">All Categories</option>';
+    allCategories.forEach(c => {
+      taskCatFilter.innerHTML += `<option value="${esc(c.name)}">${esc(c.name)}</option>`;
+    });
+  }
+
+  if (taskCatInput) {
+    taskCatInput.innerHTML = '';
+    allCategories.forEach(c => {
+      taskCatInput.innerHTML += `<option value="${esc(c.name)}">${esc(c.name)}</option>`;
+    });
+    if (allCategories.length === 0) {
+      taskCatInput.innerHTML = '<option value="General">General</option>';
+    }
+  }
+}
+
+async function loadCategoriesView() {
+  await loadCategories();
+  const grid = $('categories-grid');
+  grid.innerHTML = '';
+  if (allCategories.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🏷️</div><h3>No categories found</h3></div>';
+    return;
+  }
+  allCategories.forEach(c => {
+    grid.innerHTML += `
+      <div class="item-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="width:14px;height:14px;border-radius:50%;background:${c.color || '#8b5cf6'}"></span>
+          <span class="item-title" style="margin-bottom:0">${esc(c.name)}</span>
+        </div>
+        <p class="item-desc">${esc(c.description || 'No description provided.')}</p>
+        <div class="item-footer">
+          <button class="btn btn-ghost btn-sm" onclick="openEditCategoryModal(${c.id}, '${esc(c.name)}', '${esc(c.description||'')}', '${c.color}')">✏️ Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="confirmDeleteCategory(${c.id}, '${esc(c.name)}')">🗑️ Delete</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function openAddCategoryModal() {
+  $('cat-modal-title').textContent = '🏷️ New Category';
+  $('cat-edit-id').value = '';
+  $('cat-name-input').value = '';
+  $('cat-desc-input').value = '';
+  $('cat-color-input').value = '#8b5cf6';
+  openModal('category-modal');
+}
+
+function openEditCategoryModal(id, name, desc, color) {
+  $('cat-modal-title').textContent = '🏷️ Edit Category';
+  $('cat-edit-id').value = id;
+  $('cat-name-input').value = name;
+  $('cat-desc-input').value = desc;
+  $('cat-color-input').value = color || '#8b5cf6';
+  openModal('category-modal');
+}
+
+async function handleSaveCategory(e) {
+  e.preventDefault();
+  const id = $('cat-edit-id').value;
+  const body = {
+    name: $('cat-name-input').value.trim(),
+    description: $('cat-desc-input').value.trim(),
+    color: $('cat-color-input').value
+  };
+  try {
+    if (id) {
+      await api('PUT', `/api/categories/${id}`, body);
+      toast('Category updated! 🏷️');
+    } else {
+      await api('POST', '/api/categories', body);
+      toast('Category created! 🏷️');
+    }
+    closeModal('category-modal');
+    loadCategoriesView();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+function confirmDeleteCategory(id, name) {
+  askConfirmation('Delete Category', `Are you sure you want to delete category "${name}"?`, async () => {
+    try {
+      await api('DELETE', `/api/categories/${id}`);
+      toast('Category deleted', 'info');
+      loadCategoriesView();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+}
+
+// ── Tasks View (Personal To-Do) ───────────────────────────────────────────────
+async function loadTasks() {
+  try {
+    allTasks = await api('GET', '/api/tasks');
+    filterAndRenderTasks();
+  } catch (err) {
+    toast('Error loading tasks: ' + err.message, 'error');
+  }
+}
+
+function filterAndRenderTasks() {
+  const query = ($('tasks-search-input')?.value || '').toLowerCase();
+  const cat   = $('tasks-category-filter')?.value || '';
+  const st    = $('tasks-status-filter')?.value || 'all';
+  const sort  = $('tasks-sort-select')?.value || 'newest';
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  let tasks = allTasks.filter(t => {
+    const matchQ = t.title.toLowerCase().includes(query) || (t.description || '').toLowerCase().includes(query);
+    const matchCat = !cat || t.category === cat;
+    let matchSt = true;
+    if (st === 'pending')   matchSt = !t.completed;
+    if (st === 'completed') matchSt = t.completed;
+    if (st === 'high')      matchSt = t.priority === 'HIGH';
+    if (st === 'overdue')   matchSt = !t.completed && t.dueDate && new Date(t.dueDate) < today;
+    return matchQ && matchCat && matchSt;
+  });
+
+  const pOrder = { HIGH: 1, MEDIUM: 2, LOW: 3 };
+  tasks.sort((a, b) => {
+    if (sort === 'oldest') return a.id - b.id;
+    if (sort === 'priority') return (pOrder[a.priority] || 2) - (pOrder[b.priority] || 2);
     if (sort === 'due') {
       if (!a.dueDate && !b.dueDate) return 0;
       if (!a.dueDate) return 1;
       if (!b.dueDate) return -1;
       return new Date(a.dueDate) - new Date(b.dueDate);
     }
-    return 0;
+    return b.id - a.id;
   });
-}
-
-// ── Stats ─────────────────────────────────────────────────────────────────────
-function updateStats() {
-  const total     = allTasks.length;
-  const completed = allTasks.filter(t => t.completed).length;
-  const pending   = total - completed;
-  const rate      = total === 0 ? 0 : Math.round((completed / total) * 100);
-  const today     = new Date(); today.setHours(0,0,0,0);
-  const overdue   = allTasks.filter(t => !t.completed && t.dueDate && new Date(t.dueDate) < today).length;
-  const high      = allTasks.filter(t => t.priority === 'HIGH' && !t.completed).length;
-
-  $('stat-total').textContent     = total;
-  $('stat-pending').textContent   = pending;
-  $('stat-completed').textContent = completed;
-  $('stat-rate').textContent      = rate + '%';
-  $('badge-all').textContent       = total;
-  $('badge-pending').textContent   = pending;
-  $('badge-completed').textContent = completed;
-  $('badge-high').textContent      = high;
-  $('badge-overdue').textContent   = overdue;
-
-  const circumference = 226.2;
-  $('ring-fill').style.strokeDashoffset = circumference - (rate / 100) * circumference;
-  $('ring-percent').textContent = rate + '%';
-}
-
-// ── Render ────────────────────────────────────────────────────────────────────
-function renderTasks() {
-  const query = ($('search-input')?.value || '').toLowerCase();
-  let tasks = allTasks.filter(t =>
-    t.title.toLowerCase().includes(query) ||
-    (t.description || '').toLowerCase().includes(query)
-  );
-  tasks = applyFilter(tasks);
-  tasks = applySort(tasks);
 
   const list = $('tasks-list');
   list.innerHTML = '';
-
   if (tasks.length === 0) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><h3>No tasks here</h3><p>${currentFilter === 'all' ? 'Click &ldquo;+ Add Task&rdquo; to get started!' : 'Nothing in this filter.'}</p></div>`;
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No personal tasks found</h3>
+        <p>Click &ldquo;+ New Task&rdquo; to create a new task with subtasks.</p>
+      </div>
+    `;
     return;
   }
 
-  tasks.forEach(task => {
-    const today = new Date(); today.setHours(0,0,0,0);
-    const isOverdue = !task.completed && task.dueDate && new Date(task.dueDate) < today;
-    const dueStr = task.dueDate
-      ? new Date(task.dueDate + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
-      : null;
+  tasks.forEach(t => {
+    const isOverdue = !t.completed && t.dueDate && new Date(t.dueDate) < today;
+    const dueStr = t.dueDate ? formatDate(t.dueDate) : null;
+
+    let subtasksHtml = '';
+    if (t.subtasks && t.subtasks.length > 0) {
+      const completedSub = t.subtasks.filter(st => st.completed).length;
+      subtasksHtml = `
+        <div class="subtasks-wrapper">
+          <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);margin-bottom:6px">
+            Subtasks (${completedSub}/${t.subtasks.length}):
+          </div>
+          ${t.subtasks.map(st => `
+            <div class="subtask-item ${st.completed ? 'checked' : ''}">
+              <span class="subtask-check ${st.completed ? 'checked' : ''}" onclick="toggleSubTask(${t.id}, ${st.id})"></span>
+              <span>${esc(st.title)}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
 
     const card = document.createElement('div');
-    card.className = `task-card priority-${task.priority.toLowerCase()} ${task.completed ? 'completed' : ''}`;
-    card.dataset.id = task.id;
+    card.className = `task-card priority-${(t.priority || 'medium').toLowerCase()} ${t.completed ? 'completed' : ''}`;
     card.innerHTML = `
-      <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})" title="Toggle complete"></div>
+      <div class="task-checkbox ${t.completed ? 'checked' : ''}" onclick="toggleTask(${t.id})" title="Toggle complete"></div>
       <div class="task-body">
-        <div class="task-title">${escHtml(task.title)}</div>
-        ${task.description ? `<div class="task-desc">${escHtml(task.description)}</div>` : ''}
+        <div class="task-title">${esc(t.title)}</div>
+        ${t.description ? `<div class="task-desc">${esc(t.description)}</div>` : ''}
         <div class="task-meta">
-          <span class="badge badge-${task.priority.toLowerCase()}">${priorityLabel(task.priority)}</span>
-          ${task.completed ? '<span class="badge badge-done">✓ Done</span>' : ''}
+          <span class="badge badge-${(t.priority || 'medium').toLowerCase()}">${t.priority}</span>
+          ${t.category ? `<span class="badge" style="background:rgba(255,255,255,0.06);color:var(--text-secondary)">🏷️ ${esc(t.category)}</span>` : ''}
           ${dueStr ? `<span class="due-date ${isOverdue ? 'overdue' : ''}">📅 ${dueStr}${isOverdue ? ' · Overdue' : ''}</span>` : ''}
+          ${t.completed ? '<span class="badge badge-low">✓ Done</span>' : ''}
         </div>
+        ${subtasksHtml}
       </div>
       <div class="task-actions">
-        <button class="btn btn-ghost btn-icon btn-sm" onclick="openEditForm(${task.id})" title="Edit">✏️</button>
-        <button class="btn btn-danger btn-icon btn-sm" onclick="openDeleteModal(${task.id})" title="Delete">🗑️</button>
-      </div>`;
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="openEditTaskModal(${t.id})" title="Edit">✏️</button>
+        <button class="btn btn-danger btn-icon btn-sm" onclick="confirmDeleteTask(${t.id}, '${esc(t.title)}')" title="Delete">🗑️</button>
+      </div>
+    `;
     list.appendChild(card);
   });
 }
 
-const escHtml = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const priorityLabel = p => ({ HIGH:'🔴 High', MEDIUM:'🟡 Medium', LOW:'🟢 Low' }[p] || p);
-
-// ── Task Form ─────────────────────────────────────────────────────────────────
-function openAddForm() {
-  $('form-title').textContent = '✏️ New Task';
-  $('task-form').reset();
-  $('editing-task-id').value = '';
-  $('save-btn-text').textContent = 'Save Task';
-  const card = $('task-form-card');
-  card.classList.add('open');
-  $('task-title').focus();
-  card.scrollIntoView({ behavior:'smooth', block:'start' });
+function openAddTaskModal() {
+  $('task-modal-title').textContent = '✏️ New Task';
+  $('task-edit-id').value = '';
+  $('task-title-input').value = '';
+  $('task-desc-input').value = '';
+  $('task-priority-input').value = 'MEDIUM';
+  $('task-due-input').value = '';
+  tempSubtasks = [];
+  renderSubtasksInForm();
+  openModal('task-modal');
+  $('task-title-input').focus();
 }
 
-function openEditForm(id) {
+function openEditTaskModal(id) {
   const task = allTasks.find(t => t.id === id);
   if (!task) return;
-  $('form-title').textContent = '✏️ Edit Task';
-  $('task-title').value      = task.title;
-  $('task-desc').value       = task.description || '';
-  $('task-priority').value   = task.priority;
-  $('task-due').value        = task.dueDate || '';
-  $('editing-task-id').value = task.id;
-  $('save-btn-text').textContent = 'Update Task';
-  const card = $('task-form-card');
-  card.classList.add('open');
-  card.scrollIntoView({ behavior:'smooth', block:'start' });
+  $('task-modal-title').textContent = '✏️ Edit Task';
+  $('task-edit-id').value = task.id;
+  $('task-title-input').value = task.title;
+  $('task-desc-input').value = task.description || '';
+  $('task-category-input').value = task.category || 'General';
+  $('task-priority-input').value = task.priority || 'MEDIUM';
+  $('task-due-input').value = task.dueDate || '';
+  tempSubtasks = (task.subtasks || []).map(st => ({ title: st.title, completed: st.completed }));
+  renderSubtasksInForm();
+  openModal('task-modal');
 }
 
-function closeForm() { $('task-form-card').classList.remove('open'); }
+function renderSubtasksInForm() {
+  const list = $('subtasks-builder-list');
+  list.innerHTML = '';
+  tempSubtasks.forEach((st, idx) => {
+    list.innerHTML += `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px;background:rgba(255,255,255,0.03);border-radius:4px;margin-bottom:4px;font-size:0.8rem">
+        <span>${esc(st.title)}</span>
+        <button type="button" class="btn btn-danger btn-sm" style="padding:2px 6px;font-size:0.7rem" onclick="removeSubtaskFromForm(${idx})">✕</button>
+      </div>
+    `;
+  });
+}
+
+function addSubtaskToForm() {
+  const input = $('new-subtask-title');
+  const title = input.value.trim();
+  if (!title) return;
+  tempSubtasks.push({ title, completed: false });
+  input.value = '';
+  renderSubtasksInForm();
+}
+
+function removeSubtaskFromForm(idx) {
+  tempSubtasks.splice(idx, 1);
+  renderSubtasksInForm();
+}
 
 async function handleSaveTask(e) {
   e.preventDefault();
-  const btn = $('save-task-btn');
-  btn.innerHTML = '<div class="spinner"></div>';
-  btn.disabled = true;
-  const editId = $('editing-task-id').value;
+  const id = $('task-edit-id').value;
   const body = {
-    title:       $('task-title').value.trim(),
-    description: $('task-desc').value.trim() || null,
-    priority:    $('task-priority').value,
-    dueDate:     $('task-due').value || null
+    title: $('task-title-input').value.trim(),
+    description: $('task-desc-input').value.trim() || null,
+    category: $('task-category-input').value,
+    priority: $('task-priority-input').value,
+    dueDate: $('task-due-input').value || null,
+    subtasks: tempSubtasks
   };
+
   try {
-    if (editId) {
-      const updated = await api('PUT', `/api/tasks/${editId}`, body);
+    if (id) {
+      const updated = await api('PUT', `/api/tasks/${id}`, body);
       allTasks = allTasks.map(t => t.id === updated.id ? updated : t);
       toast('Task updated! ✏️');
     } else {
@@ -701,14 +1906,10 @@ async function handleSaveTask(e) {
       allTasks.unshift(created);
       toast('Task created! 🎉');
     }
-    closeForm();
-    updateStats();
-    renderTasks();
+    closeModal('task-modal');
+    filterAndRenderTasks();
   } catch (err) {
     toast(err.message, 'error');
-  } finally {
-    btn.innerHTML = `<span id="save-btn-text">${editId ? 'Update Task' : 'Save Task'}</span>`;
-    btn.disabled = false;
   }
 }
 
@@ -716,36 +1917,922 @@ async function toggleTask(id) {
   try {
     const updated = await api('PATCH', `/api/tasks/${id}/toggle`);
     allTasks = allTasks.map(t => t.id === updated.id ? updated : t);
-    updateStats();
-    renderTasks();
+    filterAndRenderTasks();
     toast(updated.completed ? 'Task completed! 🎉' : 'Task reopened 🔄', 'info');
   } catch (err) {
     toast(err.message, 'error');
   }
 }
 
-function openDeleteModal(id) {
-  deleteTarget = id;
-  const task = allTasks.find(t => t.id === id);
-  $('delete-task-title').textContent = task ? task.title : 'this task';
-  $('delete-modal').style.display = 'flex';
-}
-
-function closeDeleteModal() { $('delete-modal').style.display = 'none'; deleteTarget = null; }
-function handleOverlayClick(e) { if (e.target === $('delete-modal')) closeDeleteModal(); }
-
-async function confirmDelete() {
-  if (!deleteTarget) return;
+async function toggleSubTask(taskId, subTaskId) {
   try {
-    await api('DELETE', `/api/tasks/${deleteTarget}`);
-    allTasks = allTasks.filter(t => t.id !== deleteTarget);
-    updateStats();
-    renderTasks();
-    toast('Task deleted 🗑️', 'info');
+    const updated = await api('PATCH', `/api/tasks/${taskId}/subtasks/${subTaskId}/toggle`);
+    allTasks = allTasks.map(t => t.id === updated.id ? updated : t);
+    filterAndRenderTasks();
   } catch (err) {
     toast(err.message, 'error');
-  } finally {
-    closeDeleteModal();
+  }
+}
+
+function confirmDeleteTask(id, title) {
+  askConfirmation('Delete Task', `Are you sure you want to permanently delete task "${title}"?`, async () => {
+    try {
+      await api('DELETE', `/api/tasks/${id}`);
+      allTasks = allTasks.filter(t => t.id !== id);
+      filterAndRenderTasks();
+      toast('Task deleted 🗑️', 'info');
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+}
+
+// ── Courses View ──────────────────────────────────────────────────────────────
+async function loadCourses() {
+  try {
+    allCourses = await api('GET', '/api/courses');
+    const actBtn = $('courses-action-btn');
+    if (currentUser.role === 'TEACHER' || currentUser.role === 'ADMIN') {
+      actBtn.innerHTML = '<button class="btn btn-primary" onclick="openAddCourseModal()">+ Create Class</button>';
+    } else {
+      actBtn.innerHTML = '';
+    }
+    filterAndRenderCourses();
+  } catch (err) {
+    toast('Error loading courses: ' + err.message, 'error');
+  }
+}
+
+function filterAndRenderCourses() {
+  const query = ($('courses-search-input')?.value || '').toLowerCase();
+  const courses = allCourses.filter(c =>
+    c.name.toLowerCase().includes(query) || c.code.toLowerCase().includes(query)
+  );
+
+  const grid = $('courses-cards-grid');
+  grid.innerHTML = '';
+  if (courses.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🏫</div><h3>No classes found</h3></div>';
+    return;
+  }
+
+  courses.forEach(c => {
+    let actionButtons = '';
+    if (currentUser.role === 'TEACHER' && c.teacherId === currentUser.id) {
+      actionButtons = `
+        <button class="btn btn-ghost btn-sm" onclick="openClassStudentsModal(${c.id}, '${esc(c.name)}')">👥 Students (${c.studentCount})</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEnrollStudentModal(${c.id})">+ Enroll</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditCourseModal(${c.id})">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDeleteCourse(${c.id}, '${esc(c.name)}')">🗑️</button>
+      `;
+    } else if (currentUser.role === 'ADMIN') {
+      actionButtons = `
+        <button class="btn btn-ghost btn-sm" onclick="openClassStudentsModal(${c.id}, '${esc(c.name)}')">👥 Students (${c.studentCount})</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEnrollStudentModal(${c.id})">+ Enroll</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditCourseModal(${c.id})">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmDeleteCourse(${c.id}, '${esc(c.name)}')">🗑️</button>
+      `;
+    } else {
+      // Student view
+      if (c.isEnrolled) {
+        actionButtons = `
+          <span class="badge badge-low">✓ Enrolled</span>
+          <button class="btn btn-ghost btn-sm" onclick="viewCourseAssignments(${c.id})">Assignments (${c.assignmentCount}) →</button>
+          <button class="btn btn-danger btn-sm" onclick="confirmUnenrollSelf(${c.id}, '${esc(c.name)}')">Leave</button>
+        `;
+      } else {
+        actionButtons = `
+          <button class="btn btn-primary btn-sm" onclick="selfEnrollInCourse(${c.id})">Enroll in Class</button>
+        `;
+      }
+    }
+
+    grid.innerHTML += `
+      <div class="item-card">
+        <div>
+          <div class="item-code">${esc(c.code)}</div>
+          <div class="item-title">${esc(c.name)}</div>
+          <div style="font-size:0.78rem;color:var(--purple-light);margin-bottom:10px">Instructor: ${esc(c.teacherName)}</div>
+          <p class="item-desc">${esc(c.description || 'No description provided.')}</p>
+        </div>
+        <div class="item-footer">
+          ${actionButtons}
+        </div>
+      </div>
+    `;
+  });
+}
+
+function openAddCourseModal() {
+  $('course-modal-title').textContent = '🏫 New Class / Course';
+  $('course-edit-id').value = '';
+  $('course-name-input').value = '';
+  $('course-code-input').value = '';
+  $('course-desc-input').value = '';
+
+  const group = $('course-teacher-select-group');
+  if (currentUser.role === 'ADMIN') {
+    group.style.display = 'block';
+    loadTeachersIntoSelect('course-teacher-select');
+  } else {
+    group.style.display = 'none';
+  }
+  openModal('course-modal');
+}
+
+async function openEditCourseModal(id) {
+  const c = allCourses.find(x => x.id === id);
+  if (!c) return;
+  $('course-modal-title').textContent = '🏫 Edit Course';
+  $('course-edit-id').value = c.id;
+  $('course-name-input').value = c.name;
+  $('course-code-input').value = c.code;
+  $('course-desc-input').value = c.description || '';
+
+  const group = $('course-teacher-select-group');
+  if (currentUser.role === 'ADMIN') {
+    group.style.display = 'block';
+    await loadTeachersIntoSelect('course-teacher-select', c.teacherId);
+  } else {
+    group.style.display = 'none';
+  }
+  openModal('course-modal');
+}
+
+async function loadTeachersIntoSelect(selectId, selectedId = null) {
+  try {
+    const users = await api('GET', '/api/admin/users?role=TEACHER');
+    const sel = $(selectId);
+    sel.innerHTML = '';
+    users.forEach(u => {
+      sel.innerHTML += `<option value="${u.id}" ${u.id === selectedId ? 'selected' : ''}>${esc(u.name)} (${esc(u.email)})</option>`;
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function handleSaveCourse(e) {
+  e.preventDefault();
+  const id = $('course-edit-id').value;
+  const body = {
+    name: $('course-name-input').value.trim(),
+    code: $('course-code-input').value.trim().toUpperCase(),
+    description: $('course-desc-input').value.trim()
+  };
+  if (currentUser.role === 'ADMIN') {
+    const selVal = $('course-teacher-select')?.value;
+    if (selVal) body.teacherId = parseInt(selVal, 10);
+  }
+  try {
+    if (id) {
+      await api('PUT', `/api/courses/${id}`, body);
+      toast('Course updated! 🏫');
+    } else {
+      await api('POST', '/api/courses', body);
+      toast('Course created! 🏫');
+    }
+    closeModal('course-modal');
+    loadCourses();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+function confirmDeleteCourse(id, name) {
+  askConfirmation('Delete Course', `Are you sure you want to delete class "${name}"? All associated assignments and student submissions will be permanently removed.`, async () => {
+    try {
+      await api('DELETE', `/api/courses/${id}`);
+      toast('Course deleted', 'info');
+      loadCourses();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+}
+
+function openEnrollStudentModal(courseId) {
+  $('enroll-course-id').value = courseId;
+  $('enroll-student-email').value = '';
+  openModal('enroll-modal');
+}
+
+async function handleEnrollStudent(e) {
+  e.preventDefault();
+  const courseId = $('enroll-course-id').value;
+  const email = $('enroll-student-email').value.trim();
+  try {
+    await api('POST', `/api/courses/${courseId}/enroll`, { studentEmail: email });
+    toast('Student enrolled successfully! 🎓');
+    closeModal('enroll-modal');
+    loadCourses();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+async function selfEnrollInCourse(courseId) {
+  try {
+    await api('POST', `/api/courses/${courseId}/enroll`);
+    toast('Enrolled in class! 🎓');
+    loadCourses();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+function confirmUnenrollSelf(courseId, name) {
+  askConfirmation('Leave Class', `Are you sure you want to unenroll from "${name}"?`, async () => {
+    try {
+      await api('DELETE', `/api/courses/${courseId}/enroll/${currentUser.id}`);
+      toast('Unenrolled from class', 'info');
+      loadCourses();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+}
+
+async function openClassStudentsModal(courseId, courseName) {
+  $('class-students-title').textContent = `👥 Students in ${courseName}`;
+  const tbody = $('class-students-table-body');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px"><div class="spinner" style="margin:0 auto"></div></td></tr>';
+  openModal('class-students-modal');
+
+  try {
+    const list = await api('GET', `/api/courses/${courseId}/students`);
+    tbody.innerHTML = '';
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted)">No students enrolled yet.</td></tr>';
+      return;
+    }
+    list.forEach(s => {
+      tbody.innerHTML += `
+        <tr>
+          <td style="font-weight:600;color:var(--text-primary)">${esc(s.studentName)}</td>
+          <td>${esc(s.studentEmail)}</td>
+          <td>${s.completedAssignments}/${s.totalAssignments}</td>
+          <td>${s.averageGrade != null ? s.averageGrade + '%' : 'N/A'}</td>
+          <td>
+            <button class="btn btn-danger btn-sm" onclick="unenrollStudentFromClass(${courseId}, ${s.studentId}, '${esc(s.studentName)}')">Unenroll</button>
+          </td>
+        </tr>
+      `;
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="5" style="color:var(--red-light);padding:20px">Error: ${esc(err.message)}</td></tr>`;
+  }
+}
+
+async function unenrollStudentFromClass(courseId, studentId, studentName) {
+  askConfirmation('Unenroll Student', `Remove student "${studentName}" from this course?`, async () => {
+    try {
+      await api('DELETE', `/api/courses/${courseId}/enroll/${studentId}`);
+      toast('Student unenrolled', 'info');
+      closeModal('class-students-modal');
+      loadCourses();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+}
+
+function viewCourseAssignments(courseId) {
+  navigateTo('assignments');
+  const sel = $('assignments-course-filter');
+  if (sel) {
+    sel.value = courseId;
+    renderAssignmentsList();
+  }
+}
+
+// ── Assignments View ──────────────────────────────────────────────────────────
+async function loadAssignments() {
+  try {
+    allAssignments = await api('GET', '/api/assignments');
+    allCourses = await api('GET', '/api/courses');
+
+    const actBtn = $('assignments-action-btn');
+    if (currentUser.role === 'TEACHER' || currentUser.role === 'ADMIN') {
+      actBtn.innerHTML = '<button class="btn btn-primary" onclick="openAddAssignmentModal()">+ Create Assignment</button>';
+    } else {
+      actBtn.innerHTML = '';
+    }
+
+    // Populate course filter
+    const sel = $('assignments-course-filter');
+    sel.innerHTML = '<option value="">All Classes</option>';
+    allCourses.forEach(c => {
+      sel.innerHTML += `<option value="${c.id}">${esc(c.code)} - ${esc(c.name)}</option>`;
+    });
+
+    renderAssignmentsList();
+  } catch (err) {
+    toast('Error loading assignments: ' + err.message, 'error');
+  }
+}
+
+function renderAssignmentsList() {
+  const courseFilter = $('assignments-course-filter')?.value || '';
+  const statusFilter = $('assignments-status-filter')?.value || 'all';
+
+  let list = allAssignments.filter(a => {
+    const matchC = !courseFilter || String(a.courseId) === String(courseFilter);
+    let matchS = true;
+    if (statusFilter === 'pending') matchS = a.submissionStatus === 'NOT_SUBMITTED';
+    if (statusFilter === 'submitted') matchS = a.submissionStatus === 'SUBMITTED';
+    if (statusFilter === 'graded') matchS = a.submissionStatus === 'GRADED';
+    return matchC && matchS;
+  });
+
+  const grid = $('assignments-cards-grid');
+  grid.innerHTML = '';
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><h3>No assignments found</h3></div>';
+    return;
+  }
+
+  list.forEach(a => {
+    let actionArea = '';
+
+    if (currentUser.role === 'STUDENT') {
+      if (a.submissionStatus === 'GRADED') {
+        actionArea = `
+          <div style="width:100%;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:var(--radius-sm);padding:10px;margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;font-weight:700;color:var(--green-light);font-size:0.85rem">
+              <span>Grade: ${a.myGrade}/${a.points}</span>
+              <span class="badge badge-graded">✓ Graded</span>
+            </div>
+            ${a.myFeedback ? `<div style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px;font-style:italic">"${esc(a.myFeedback)}"</div>` : ''}
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="openSubmitModal(${a.id}, '${esc(a.title)}', '${esc(a.mySubmissionNotes||'')}')">Resubmit Work</button>
+        `;
+      } else if (a.submissionStatus === 'SUBMITTED') {
+        actionArea = `
+          <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+            <span class="badge badge-submitted">✓ Submitted</span>
+            <button class="btn btn-ghost btn-sm" onclick="openSubmitModal(${a.id}, '${esc(a.title)}', '${esc(a.mySubmissionNotes||'')}')">Update Submission</button>
+          </div>
+        `;
+      } else {
+        actionArea = `
+          <button class="btn btn-primary btn-sm" onclick="openSubmitModal(${a.id}, '${esc(a.title)}')">📤 Submit Work</button>
+        `;
+      }
+    } else {
+      // TEACHER or ADMIN
+      actionArea = `
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="btn btn-primary btn-sm" onclick="openViewSubmissionsModal(${a.id}, '${esc(a.title)}', ${a.points})">
+            📥 Submissions (${a.gradedSubmissions || 0}/${a.totalSubmissions || 0})
+          </button>
+          <button class="btn btn-ghost btn-sm btn-icon" onclick="openEditAssignmentModal(${a.id})" title="Edit">✏️</button>
+          <button class="btn btn-danger btn-sm btn-icon" onclick="confirmDeleteAssignment(${a.id}, '${esc(a.title)}')" title="Delete">🗑️</button>
+        </div>
+      `;
+    }
+
+    grid.innerHTML += `
+      <div class="item-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <span class="item-code">${esc(a.courseCode)} · ${esc(a.courseName)}</span>
+            <span class="badge badge-${(a.priority||'medium').toLowerCase()}">${a.priority}</span>
+          </div>
+          <div class="item-title">${esc(a.title)}</div>
+          <p class="item-desc">${esc(a.instructions || 'No instructions provided.')}</p>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:12px;display:flex;gap:12px">
+            <span>📅 Due: ${a.dueDate ? formatDate(a.dueDate) : 'No due date'}</span>
+            <span>🎯 ${a.points} points</span>
+          </div>
+          ${a.attachmentUrl ? `<div style="margin-bottom:12px"><a href="${esc(a.attachmentUrl)}" target="_blank" class="btn btn-ghost btn-sm" style="font-size:0.75rem">📎 View Attachment Link</a></div>` : ''}
+        </div>
+        <div class="item-footer">
+          ${actionArea}
+        </div>
+      </div>
+    `;
+  });
+}
+
+function openAddAssignmentModal() {
+  $('assignment-modal-title').textContent = '📑 New Assignment';
+  $('assignment-edit-id').value = '';
+  $('assignment-title-input').value = '';
+  $('assignment-instructions-input').value = '';
+  $('assignment-due-input').value = '';
+  $('assignment-points-input').value = 100;
+  $('assignment-priority-input').value = 'MEDIUM';
+  $('assignment-attach-input').value = '';
+
+  const sel = $('assignment-course-select');
+  sel.innerHTML = '';
+  allCourses.forEach(c => {
+    sel.innerHTML += `<option value="${c.id}">${esc(c.code)} - ${esc(c.name)}</option>`;
+  });
+
+  openModal('assignment-modal');
+}
+
+function openEditAssignmentModal(id) {
+  const a = allAssignments.find(x => x.id === id);
+  if (!a) return;
+  $('assignment-modal-title').textContent = '📑 Edit Assignment';
+  $('assignment-edit-id').value = a.id;
+  $('assignment-title-input').value = a.title;
+  $('assignment-instructions-input').value = a.instructions || '';
+  $('assignment-due-input').value = a.dueDate || '';
+  $('assignment-points-input').value = a.points || 100;
+  $('assignment-priority-input').value = a.priority || 'MEDIUM';
+  $('assignment-attach-input').value = a.attachmentUrl || '';
+
+  const sel = $('assignment-course-select');
+  sel.innerHTML = '';
+  allCourses.forEach(c => {
+    sel.innerHTML += `<option value="${c.id}" ${c.id === a.courseId ? 'selected' : ''}>${esc(c.code)} - ${esc(c.name)}</option>`;
+  });
+
+  openModal('assignment-modal');
+}
+
+async function handleSaveAssignment(e) {
+  e.preventDefault();
+  const editId   = $('assignment-edit-id').value;
+  const courseId = $('assignment-course-select').value;
+  const body = {
+    title: $('assignment-title-input').value.trim(),
+    instructions: $('assignment-instructions-input').value.trim(),
+    dueDate: $('assignment-due-input').value || null,
+    points: parseInt($('assignment-points-input').value, 10),
+    priority: $('assignment-priority-input').value,
+    attachmentUrl: $('assignment-attach-input').value.trim() || null
+  };
+  try {
+    if (editId) {
+      await api('PUT', `/api/assignments/${editId}`, body);
+      toast('Assignment updated! 📑');
+    } else {
+      await api('POST', `/api/courses/${courseId}/assignments`, body);
+      toast('Assignment published to enrolled students! 📑');
+    }
+    closeModal('assignment-modal');
+    loadAssignments();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+function confirmDeleteAssignment(id, title) {
+  askConfirmation('Delete Assignment', `Are you sure you want to delete assignment "${title}"?`, async () => {
+    try {
+      await api('DELETE', `/api/assignments/${id}`);
+      toast('Assignment deleted', 'info');
+      loadAssignments();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+}
+
+function openSubmitModal(assignmentId, title, existingNotes = '') {
+  $('submit-modal-title').textContent = `📤 Submit: ${title}`;
+  $('submit-assignment-id').value = assignmentId;
+  $('submit-notes-input').value = existingNotes;
+  $('submit-url-input').value = '';
+  openModal('submit-modal');
+}
+
+async function handleSubmitAssignment(e) {
+  e.preventDefault();
+  const aId = $('submit-assignment-id').value;
+  const body = {
+    submissionNotes: $('submit-notes-input').value.trim(),
+    attachmentUrl: $('submit-url-input').value.trim() || null
+  };
+  try {
+    await api('POST', `/api/assignments/${aId}/submit`, body);
+    toast('Assignment submitted successfully! 🎉');
+    closeModal('submit-modal');
+    loadAssignments();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+async function openViewSubmissionsModal(assignmentId, title, points) {
+  $('view-submissions-title').textContent = `📥 Submissions: ${title} (${points} pts)`;
+  const tbody = $('view-submissions-table-body');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px"><div class="spinner" style="margin:0 auto"></div></td></tr>';
+  openModal('view-submissions-modal');
+
+  try {
+    const list = await api('GET', `/api/assignments/${assignmentId}/submissions`);
+    tbody.innerHTML = '';
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-muted)">No student submissions yet.</td></tr>';
+      return;
+    }
+    list.forEach(s => {
+      tbody.innerHTML += `
+        <tr>
+          <td style="font-weight:600;color:var(--text-primary)">
+            ${esc(s.studentName)}
+            <div style="font-size:0.75rem;color:var(--text-muted)">${esc(s.studentEmail)}</div>
+          </td>
+          <td style="max-width:240px">
+            <div style="font-size:0.8rem;line-height:1.4">${esc(s.submissionNotes || 'No notes')}</div>
+            ${s.attachmentUrl ? `<a href="${esc(s.attachmentUrl)}" target="_blank" style="font-size:0.75rem;color:var(--purple-light)">📎 Link</a>` : ''}
+          </td>
+          <td>${formatDate(s.submittedAt)}</td>
+          <td>
+            <span class="badge ${s.status === 'GRADED' ? 'badge-graded' : 'badge-submitted'}">
+              ${s.status === 'GRADED' ? `Grade: ${s.grade}/${s.assignmentPoints}` : 'Submitted'}
+            </span>
+            ${s.feedback ? `<div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;font-style:italic">"${esc(s.feedback)}"</div>` : ''}
+          </td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick="openGradeModal(${s.assignmentId}, ${s.id}, '${esc(s.studentName)}', ${s.assignmentPoints}, ${s.grade || ''}, '${esc(s.feedback || '')}')">
+              ${s.status === 'GRADED' ? 'Edit Grade' : 'Grade'}
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="5" style="color:var(--red-light);padding:20px">Error: ${esc(err.message)}</td></tr>`;
+  }
+}
+
+function openGradeModal(assignmentId, submissionId, studentName, points, currentGrade = '', currentFeedback = '') {
+  $('grade-assignment-id').value = assignmentId;
+  $('grade-submission-id').value = submissionId;
+  $('grade-student-info').textContent = `Student: ${studentName} | Max Points: ${points}`;
+  $('grade-score-input').value = currentGrade;
+  $('grade-feedback-input').value = currentFeedback;
+  openModal('grade-modal');
+}
+
+async function handleGradeSubmission(e) {
+  e.preventDefault();
+  const aId = $('grade-assignment-id').value;
+  const sId = $('grade-submission-id').value;
+  const body = {
+    grade: parseFloat($('grade-score-input').value),
+    feedback: $('grade-feedback-input').value.trim() || null
+  };
+  try {
+    await api('PATCH', `/api/assignments/${aId}/submissions/${sId}/grade`, body);
+    toast('Grade & feedback submitted! 🎯');
+    closeModal('grade-modal');
+    closeModal('view-submissions-modal');
+    loadAssignments();
+    if (currentView === 'teacher-dashboard') loadTeacherDashboard();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+// ── Calendar View ─────────────────────────────────────────────────────────────
+async function loadCalendar() {
+  try {
+    const events = await api('GET', '/api/calendar/events');
+    const container = $('calendar-agenda-list');
+    container.innerHTML = '';
+    if (events.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><h3>No upcoming deadlines</h3><p>You have no scheduled tasks or assignments in this period.</p></div>';
+      return;
+    }
+
+    events.forEach(ev => {
+      const d = ev.date ? new Date(ev.date + 'T00:00:00') : new Date();
+      const dayNum = d.getDate();
+      const monthStr = d.toLocaleDateString('en-US', { month: 'short' });
+
+      container.innerHTML += `
+        <div class="agenda-item">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div class="agenda-date-box">
+              <div class="agenda-day">${dayNum}</div>
+              <div class="agenda-month">${monthStr}</div>
+            </div>
+            <div>
+              <div style="font-weight:700;color:var(--text-primary);font-size:0.95rem">
+                ${ev.type === 'ASSIGNMENT' ? '📝 ' : '📋 '} ${esc(ev.title)}
+              </div>
+              <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px">
+                ${ev.courseName ? esc(ev.courseName) + ' · ' : ''}
+                ${ev.category ? '🏷️ ' + esc(ev.category) + ' · ' : ''}
+                Type: ${ev.type}
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="badge badge-${(ev.priority || 'medium').toLowerCase()}">${ev.priority || 'MEDIUM'}</span>
+            ${ev.completed ? '<span class="badge badge-low">✓ Complete</span>' : '<span class="badge badge-high">Pending</span>'}
+          </div>
+        </div>
+      `;
+    });
+  } catch (err) {
+    toast('Error loading calendar: ' + err.message, 'error');
+  }
+}
+
+// ── Announcements View ────────────────────────────────────────────────────────
+async function loadAnnouncements() {
+  try {
+    const announcements = await api('GET', '/api/announcements');
+    const actBtn = $('announcement-action-btn');
+    if (currentUser.role === 'ADMIN' || currentUser.role === 'TEACHER') {
+      actBtn.innerHTML = '<button class="btn btn-primary" onclick="openAddAnnouncementModal()">+ Post Announcement</button>';
+    } else {
+      actBtn.innerHTML = '';
+    }
+
+    const list = $('announcements-list');
+    list.innerHTML = '';
+    if (announcements.length === 0) {
+      list.innerHTML = '<div class="empty-state"><div class="empty-icon">📢</div><h3>No announcements yet</h3></div>';
+      return;
+    }
+
+    announcements.forEach(a => {
+      const isUrgent = a.priority === 'URGENT';
+      const isHigh = a.priority === 'HIGH';
+      const badgeClass = isUrgent ? 'badge-urgent' : (isHigh ? 'badge-high' : 'badge-low');
+
+      let deleteBtn = '';
+      if (currentUser.role === 'ADMIN' || (currentUser.role === 'TEACHER' && a.authorId === currentUser.id)) {
+        deleteBtn = `<button class="btn btn-danger btn-sm" onclick="confirmDeleteAnnouncement(${a.id}, '${esc(a.title)}')">Delete</button>`;
+      }
+
+      list.innerHTML += `
+        <div class="dash-card" style="margin-bottom:0">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px">
+            <div>
+              <span class="badge ${badgeClass}" style="margin-bottom:6px">${a.priority}</span>
+              <h3 style="font-size:1.15rem;font-weight:700;color:var(--text-primary)">${esc(a.title)}</h3>
+              <div style="font-size:0.75rem;color:var(--text-muted)">
+                Posted by <strong style="color:var(--purple-light)">${esc(a.authorName)} (${a.authorRole})</strong> · ${a.courseName ? 'Course: ' + esc(a.courseName) : '🌐 Sitewide Announcement'} · ${formatDate(a.createdAt)}
+              </div>
+            </div>
+            ${deleteBtn}
+          </div>
+          <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.6;margin-top:10px">${esc(a.content)}</p>
+        </div>
+      `;
+    });
+  } catch (err) {
+    toast('Error loading announcements: ' + err.message, 'error');
+  }
+}
+
+async function openAddAnnouncementModal() {
+  $('ann-title-input').value = '';
+  $('ann-content-input').value = '';
+  $('ann-priority-select').value = 'NORMAL';
+
+  const sel = $('ann-target-select');
+  sel.innerHTML = '';
+
+  if (currentUser.role === 'ADMIN') {
+    sel.innerHTML += '<option value="">🌐 Platform-Wide (All Users)</option>';
+  }
+
+  // Load courses for target
+  const courses = await api('GET', '/api/courses');
+  courses.forEach(c => {
+    sel.innerHTML += `<option value="${c.id}">🏫 ${esc(c.code)} - ${esc(c.name)}</option>`;
+  });
+
+  openModal('announcement-modal');
+}
+
+async function handleSaveAnnouncement(e) {
+  e.preventDefault();
+  const courseIdVal = $('ann-target-select').value;
+  const body = {
+    title: $('ann-title-input').value.trim(),
+    content: $('ann-content-input').value.trim(),
+    courseId: courseIdVal ? parseInt(courseIdVal, 10) : null,
+    priority: $('ann-priority-select').value
+  };
+
+  try {
+    await api('POST', '/api/announcements', body);
+    toast('Announcement published! 📢');
+    closeModal('announcement-modal');
+    loadAnnouncements();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+function confirmDeleteAnnouncement(id, title) {
+  askConfirmation('Delete Announcement', `Delete announcement "${title}"?`, async () => {
+    try {
+      await api('DELETE', `/api/announcements/${id}`);
+      toast('Announcement deleted', 'info');
+      loadAnnouncements();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+}
+
+// ── Admin User Management ─────────────────────────────────────────────────────
+async function loadAdminUsers() {
+  const roleFilter = $('users-role-filter')?.value || '';
+  const search = $('users-search-input')?.value || '';
+
+  try {
+    let url = '/api/admin/users?';
+    if (roleFilter) url += `role=${encodeURIComponent(roleFilter)}&`;
+    if (search) url += `query=${encodeURIComponent(search)}&`;
+
+    const users = await api('GET', url);
+    const tbody = $('admin-users-table');
+    tbody.innerHTML = '';
+    if (users.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">No users match the search criteria.</td></tr>';
+      return;
+    }
+
+    users.forEach(u => {
+      tbody.innerHTML += `
+        <tr>
+          <td>#${u.id}</td>
+          <td style="font-weight:600;color:var(--text-primary)">${esc(u.name)}</td>
+          <td>${esc(u.email)}</td>
+          <td>
+            <select class="filter-select" style="padding:4px 8px;font-size:0.75rem" onchange="changeUserRole(${u.id}, this.value)">
+              <option value="STUDENT" ${u.role === 'STUDENT' ? 'selected' : ''}>STUDENT</option>
+              <option value="TEACHER" ${u.role === 'TEACHER' ? 'selected' : ''}>TEACHER</option>
+              <option value="ADMIN"   ${u.role === 'ADMIN' ? 'selected' : ''}>ADMIN</option>
+            </select>
+          </td>
+          <td>
+            <span class="badge ${u.active ? 'badge-low' : 'badge-high'}">${u.active ? 'Active' : 'Deactivated'}</span>
+          </td>
+          <td>${formatDate(u.createdAt)}</td>
+          <td>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-ghost btn-sm" onclick="openEditUserModal(${u.id}, '${esc(u.name)}', '${esc(u.email)}', '${u.role}', ${u.active})">Edit</button>
+              <button class="btn ${u.active ? 'btn-danger' : 'btn-success'} btn-sm" onclick="toggleUserStatus(${u.id}, ${!u.active}, '${esc(u.name)}')">
+                ${u.active ? 'Deactivate' : 'Activate'}
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+  } catch (err) {
+    toast('Error loading users: ' + err.message, 'error');
+  }
+}
+
+async function changeUserRole(userId, newRole) {
+  try {
+    await api('PATCH', `/api/admin/users/${userId}/role`, { role: newRole });
+    toast(`User role updated to ${newRole}! 👑`);
+  } catch (err) {
+    toast(err.message, 'error');
+    loadAdminUsers();
+  }
+}
+
+function toggleUserStatus(userId, newActive, name) {
+  const action = newActive ? 'activate' : 'deactivate';
+  askConfirmation(`${action.toUpperCase()} User Account`, `Are you sure you want to ${action} the account for ${name}?`, async () => {
+    try {
+      await api('PATCH', `/api/admin/users/${userId}/status`, { active: newActive });
+      toast(`User ${action}d successfully`, 'info');
+      loadAdminUsers();
+    } catch (err) {
+      toast(err.message, 'error');
+    }
+  });
+}
+
+function openEditUserModal(id, name, email, role, active) {
+  $('edit-user-id').value = id;
+  $('edit-user-name').value = name;
+  $('edit-user-email').value = email;
+  $('edit-user-role').value = role;
+  $('edit-user-active').value = String(active);
+  openModal('edit-user-modal');
+}
+
+async function handleSaveUser(e) {
+  e.preventDefault();
+  const id = $('edit-user-id').value;
+  const body = {
+    name: $('edit-user-name').value.trim(),
+    email: $('edit-user-email').value.trim(),
+    role: $('edit-user-role').value,
+    active: $('edit-user-active').value === 'true'
+  };
+
+  try {
+    await api('PUT', `/api/admin/users/${id}`, body);
+    toast('User account details updated! 👤');
+    closeModal('edit-user-modal');
+    loadAdminUsers();
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+// ── Profile Settings ──────────────────────────────────────────────────────────
+function openProfileModal() {
+  $('profile-name').value = currentUser.name;
+  $('profile-email').value = currentUser.email;
+  $('profile-curr-pass').value = '';
+  $('profile-new-pass').value = '';
+  openModal('profile-modal');
+}
+
+async function handleSaveProfile(e) {
+  e.preventDefault();
+  const body = {
+    name: $('profile-name').value.trim()
+  };
+  const curr = $('profile-curr-pass').value;
+  const next = $('profile-new-pass').value;
+  if (next) {
+    if (!curr) {
+      toast('Please enter your current password to set a new password', 'error');
+      return;
+    }
+    body.currentPassword = curr;
+    body.newPassword = next;
+  }
+
+  try {
+    const res = await api('PUT', '/api/users/me', body);
+    currentUser.name = res.name;
+    $('user-name-sm').textContent = currentUser.name;
+    $('sidebar-user-name').textContent = currentUser.name;
+    $('user-avatar-sm').textContent = currentUser.name.charAt(0).toUpperCase();
+    toast('Profile updated successfully! ✅');
+    closeModal('profile-modal');
+  } catch (err) {
+    toast(err.message, 'error');
+  }
+}
+
+// ── Modal Utilities ───────────────────────────────────────────────────────────
+function openModal(id) {
+  const el = $(id);
+  if (el) el.style.display = 'flex';
+}
+
+function closeModal(id) {
+  const el = $(id);
+  if (el) el.style.display = 'none';
+}
+
+function handleModalOverlayClick(e, modalId) {
+  if (e.target === $(modalId)) {
+    closeModal(modalId);
+  }
+}
+
+function askConfirmation(title, message, onConfirm) {
+  $('confirm-modal-title').textContent = title;
+  $('confirm-modal-msg').textContent = message;
+  confirmCallback = onConfirm;
+  openModal('confirm-modal');
+}
+
+$('confirm-modal-btn').onclick = async () => {
+  if (confirmCallback) {
+    const cb = confirmCallback;
+    confirmCallback = null;
+    closeModal('confirm-modal');
+    await cb();
+  }
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch (e) {
+    return dateStr;
   }
 }
 
@@ -753,16 +2840,39 @@ async function confirmDelete() {
 window.addEventListener('DOMContentLoaded', async () => {
   setTimeout(() => {
     const lo = $('loading-overlay');
-    lo.style.transition = 'opacity 0.5s ease';
-    lo.style.opacity = '0';
-    setTimeout(() => lo.style.display = 'none', 500);
-  }, 800);
-  if (authToken) { await loadApp(); } else { $('auth-screen').style.display = 'flex'; }
+    if (lo) {
+      lo.style.transition = 'opacity 0.4s ease';
+      lo.style.opacity = '0';
+      setTimeout(() => lo.style.display = 'none', 400);
+    }
+  }, 400);
+
+  if (authToken) {
+    await loadApp();
+  } else {
+    $('auth-screen').style.display = 'flex';
+  }
 });
 
+// Global Keyboard Shortcuts
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeForm(); closeDeleteModal(); }
-  if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); $('search-input')?.focus(); }
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    $('notif-dropdown').style.display = 'none';
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    const search = $('tasks-search-input') || $('courses-search-input') || $('users-search-input');
+    if (search) search.focus();
+  }
+});
+
+// Close notification dropdown when clicking outside
+document.addEventListener('click', e => {
+  const wrapper = document.querySelector('.notif-wrapper');
+  if (wrapper && !wrapper.contains(e.target)) {
+    $('notif-dropdown').style.display = 'none';
+  }
 });
 </script>
 </body>
